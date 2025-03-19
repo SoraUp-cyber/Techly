@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusGuard - Suite de Seguridad</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="logo.png">
+    <style>
+        /* Animación de vibración para alertas */
+        .alerta-activa {
+            animation: vibracion 2s infinite;
+        }
+        
+        @keyframes vibracion {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(3px); }
+            50% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Transición suave para la barra de progreso */
+        .progreso-escaneo {
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* Estilo para archivos infectados */
+        .archivo-infectado {
+            background: linear-gradient(90deg, #fecaca10 0%, #f8717110 100%);
+            border-left: 3px solid #ef4444;
+        }
+
+        /* Animación de entrada para el menú móvil */
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Animación de salida para el menú móvil */
+        @keyframes slideOut {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+
+        .mobile-menu {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .mobile-menu.hidden {
+            animation: slideOut 0.3s ease-out;
+        }
+
+        /* Animación de entrada para el modal */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <!-- Navegación Principal -->
+    <nav class="bg-gray-800 shadow-xl sticky top-0 z-50" aria-label="Navegación principal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
+                    <!-- Logo con tamaño personalizado -->
+                    <img src="logo.png" alt="Logo de Techly" style="height: 55px; width: 55px;"> <!-- Tamaño de 50x50 píxeles -->
+                    <span class="text-white text-xl font-bold ml-3">Techly</span>
+                </a>
+
+                <!-- Navegación Desktop -->
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="nav-item">
+                        <i data-lucide="home" class="nav-icon"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="CPU.html" class="nav-item">
+                        <i data-lucide="cpu" class="nav-icon"></i>
+                        <span>CPU</span>
+                    </a>
+                    <a href="gamepad.html" class="nav-item">
+                        <i data-lucide="gamepad-2" class="nav-icon"></i>
+                        <span>Gamepad</span>
+                    </a>
+                    <a href="sonido.html" class="nav-item">
+                        <i data-lucide="volume-2" class="nav-icon"></i>
+                        <span>Sonido</span>
+                    </a>
+                    <a href="virus.html" class="nav-item">
+                        <i data-lucide="shield-alert" class="nav-icon"></i>
+                        <span>Virus</span>
+                    </a>
+                    <a id="infoButton" class="nav-item">
+                        <i data-lucide="info" class="nav-icon"></i>
+                        <span>Información</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal de Información -->
+    <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+        <div class="bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">Información de la Página</h2>
+                <button id="closeModalButton" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <p class="text-gray-400">
+                Esta es una página de prueba para el sistema de seguridad NexusGuard. Aquí puedes realizar escaneos rápidos y profundos, así como ver amenazas detectadas.
+            </p>
+        </div>
+    </div>
+
+
+ <!-- Contenido Principal -->
+ <main class="flex-1 p-4 sm:p-6 lg:p-8">
+    <!-- Sección de Escaneo -->
+    <section class="max-w-6xl mx-auto bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 p-8">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl font-bold text-white">Escaneo de Virus</h2>
+            <p class="text-gray-400 mt-2">Sube un archivo para escanearlo en busca de virus y amenazas.</p>
+        </div>
+
+        <!-- Área de Carga de Archivos -->
+        <div class="border-2 border-dashed border-gray-600 rounded-xl p-6 text-center">
+            <div class="mb-4">
+                <i data-lucide="folder-up" class="w-12 h-12 text-purple-400 mx-auto"></i>
+            </div>
+            <p class="text-sm text-gray-400">Arrastra archivos o <button class="text-purple-400 hover:text-purple-300">examina</button></p>
+        </div>
+
+        <!-- Progreso del Escaneo -->
+        <div class="mt-6 space-y-4">
+            <div class="flex justify-between text-sm text-gray-400">
+                <span>Progreso del Escaneo</span>
+                <span id="porcentaje-escaneo">0%</span>
+            </div>
+            <div class="w-full bg-gray-600 rounded-full h-2">
+                <div id="barraProgreso" class="progreso-escaneo bg-gradient-to-r from-blue-400 to-purple-400 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Resultados del Escaneo -->
+        <div id="resultadosEscaneo" class="mt-6 bg-gray-700 rounded-xl border border-gray-600 p-6">
+            <p class="text-gray-400">Esperando archivo para escanear...</p>
+        </div>
+    </section>
+
+    <!-- Sección de Estadísticas -->
+    <section class="max-w-6xl mx-auto bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 p-8 mt-8">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl font-bold text-white">Estadísticas de Amenazas</h2>
+            <p class="text-gray-400 mt-2">Resumen de amenazas detectadas en tiempo real.</p>
+        </div>
+
+        <!-- Tarjetas de Estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-gray-700 p-6 rounded-xl border border-gray-600">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400 mb-1">TOTAL DE AMENAZAS</p>
+                        <p class="text-2xl font-bold text-red-400">1,428</p>
+                    </div>
+                    <div class="p-2 bg-red-400/20 rounded-lg">
+                        <i data-lucide="alert-octagon" class="w-6 h-6 text-red-400"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-700 p-6 rounded-xl border border-gray-600">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400 mb-1">ARCHIVOS ESCANEADOS</p>
+                        <p class="text-2xl font-bold text-blue-400">5,230</p>
+                    </div>
+                    <div class="p-2 bg-blue-400/20 rounded-lg">
+                        <i data-lucide="file" class="w-6 h-6 text-blue-400"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-700 p-6 rounded-xl border border-gray-600">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400 mb-1">SALUD DEL SISTEMA</p>
+                        <p class="text-2xl font-bold text-green-400">98%</p>
+                    </div>
+                    <div class="p-2 bg-green-400/20 rounded-lg">
+                        <i data-lucide="shield" class="w-6 h-6 text-green-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+
+<!-- Footer -->
+<footer class="bg-gray-800 border-t border-gray-700 mt-8">
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-gray-400">
+            <!-- Sobre Nosotros -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Sobre Nosotros</h3>
+                <p class="text-sm">Somos especialistas en desarrollo de herramientas para gaming y diagnóstico de hardware.</p>
+            </div>
+
+            <!-- Enlaces Rápidos -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Enlaces Rápidos</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
+                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">Pruebas</a></li>
+                    <li><a href="acerca.html" class="hover:text-blue-400 transition-colors">Acerca de</a></li>
+                </ul>
+            </div>
+
+            <!-- Inicio -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Inicio</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">CPU</a></li>
+                    <li><a href="gamepad.html" class="hover:text-blue-400 transition-colors">Gamepad</a></li>
+                    <li><a href="sonido.html" class="hover:text-blue-400 transition-colors">Sonido</a></li>
+                    <li><a href="virus.html" class="hover:text-blue-400 transition-colors">Virus</a></li>
+                </ul>
+            </div>
+
+            <!-- Información Legal -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Información Legal</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="Política de Privacidad.html" class="hover:text-blue-400 transition-colors">Política de Privacidad</a></li>
+                    <li><a href="Términos y Condiciones.html" class="hover:text-blue-400 transition-colors">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Derechos de Autor -->
+        <div class="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
+            <p>&copy; 2023 Techly. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- Scripts -->
+    <script>
+// Inicializar los íconos de Lucide
+lucide.createIcons();
+
+// Manejo del menú móvil
+const mobileMenuButton = document.getElementById('mobileMenuButton');
+const mobileMenu = document.getElementById('mobileMenu');
+
+if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden'); // Alternar visibilidad del menú móvil
+    });
+}
+
+// Manejo del modal de información
+const infoButton = document.getElementById('infoButton');
+const infoButtonMobile = document.getElementById('infoButtonMobile');
+const infoModal = document.getElementById('infoModal');
+const closeModalButton = document.getElementById('closeModalButton');
+
+// Función para mostrar el modal
+const showModal = () => {
+    infoModal.classList.remove('hidden'); // Muestra el modal
+    infoModal.classList.add('flex'); // Asegura que el modal sea flexible
+};
+
+// Función para ocultar el modal
+const hideModal = () => {
+    infoModal.classList.add('hidden'); // Oculta el modal
+    infoModal.classList.remove('flex'); // Elimina la clase flex
+};
+
+// Event listeners para los botones de información
+if (infoButton) {
+    infoButton.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (escritorio)
+}
+
+if (infoButtonMobile) {
+    infoButtonMobile.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (móvil)
+}
+
+// Event listener para el botón de cerrar el modal
+if (closeModalButton) {
+    closeModalButton.addEventListener('click', hideModal); // Oculta el modal al hacer clic en el botón de cerrar
+}
+
+// Cerrar el modal haciendo clic fuera del contenido del modal
+infoModal.addEventListener('click', (event) => {
+    if (event.target === infoModal) {
+        hideModal(); // Oculta el modal si se hace clic fuera del contenido
+    }
+});
+
+// Cerrar el modal con la tecla Escape
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !infoModal.classList.contains('hidden')) {
+        hideModal(); // Oculta el modal si se presiona la tecla Escape
+    }
+});
+
+
+
+
+
+
+  // Inicializar los íconos de Lucide
+  lucide.createIcons();
+
+// Seleccionar elementos del DOM
+const barraProgreso = document.getElementById('barraProgreso');
+const porcentajeEscaneo = document.getElementById('porcentaje-escaneo');
+const resultadosEscaneo = document.getElementById('resultadosEscaneo');
+const inputArchivo = document.createElement('input'); // Crear un input de tipo file
+
+// Configurar el input de archivo
+inputArchivo.type = 'file';
+inputArchivo.style.display = 'none'; // Ocultar el input
+
+// Función para simular el escaneo de archivos
+const simularEscaneo = (archivo) => {
+    let progreso = 0;
+    const intervalo = setInterval(() => {
+        if (progreso >= 100) {
+            clearInterval(intervalo); // Detener el intervalo cuando el progreso llegue al 100%
+
+            // Simular resultado del escaneo (virus o no)
+            const tieneVirus = Math.random() < 0.5; // 50% de probabilidad de que tenga virus
+            if (tieneVirus) {
+                resultadosEscaneo.innerHTML = `
+                    <p class="text-red-400">¡Amenaza detectada!</p>
+                    <p class="text-gray-400">El archivo <strong>${archivo.name}</strong> contiene un virus.</p>
+                `;
+            } else {
+                resultadosEscaneo.innerHTML = `
+                    <p class="text-green-400">Escaneo completado.</p>
+                    <p class="text-gray-400">El archivo <strong>${archivo.name}</strong> está limpio.</p>
+                `;
+            }
+        } else {
+            progreso += 10; // Incrementar el progreso en 10% cada 500 ms
+            barraProgreso.style.width = `${progreso}%`; // Actualizar el ancho de la barra de progreso
+            porcentajeEscaneo.textContent = `${progreso}%`; // Actualizar el porcentaje de progreso
+        }
+    }, 500); // Ejecutar cada 500 ms
+};
+
+// Event listener para el botón de "examina"
+const botonExamina = document.querySelector('.border-dashed button');
+if (botonExamina) {
+    botonExamina.addEventListener('click', () => {
+        inputArchivo.click(); // Abrir el diálogo de selección de archivos
+    });
+}
+
+// Event listener para el input de archivo
+inputArchivo.addEventListener('change', (event) => {
+    const archivo = event.target.files[0]; // Obtener el archivo seleccionado
+    if (archivo) {
+        resultadosEscaneo.innerHTML = `<p class="text-gray-400">Escaneando <strong>${archivo.name}</strong>...</p>`;
+        simularEscaneo(archivo); // Iniciar el escaneo
+    }
+});
+
+// Event listener para el área de arrastrar y soltar
+const areaCarga = document.querySelector('.border-dashed');
+if (areaCarga) {
+    areaCarga.addEventListener('dragover', (event) => {
+        event.preventDefault(); // Prevenir el comportamiento por defecto
+        areaCarga.classList.add('border-purple-400'); // Cambiar el borde al arrastrar
+    });
+
+    areaCarga.addEventListener('dragleave', () => {
+        areaCarga.classList.remove('border-purple-400'); // Restaurar el borde al salir
+    });
+
+    areaCarga.addEventListener('drop', (event) => {
+        event.preventDefault(); // Prevenir el comportamiento por defecto
+        areaCarga.classList.remove('border-purple-400'); // Restaurar el borde al soltar
+
+        const archivo = event.dataTransfer.files[0]; // Obtener el archivo soltado
+        if (archivo) {
+            resultadosEscaneo.innerHTML = `<p class="text-gray-400">Escaneando <strong>${archivo.name}</strong>...</p>`;
+            simularEscaneo(archivo); // Iniciar el escaneo
+        }
+    });
+}
+
+    </script>
+</body>
+</html>

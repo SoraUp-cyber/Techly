@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Monitor Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="logo.png">
+    <style>
+        .metric-card {
+            transition: all 0.2s ease;
+            background: linear-gradient(145deg, #1f2937, #111827);
+        }
+        
+        .gauge-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .temperature-glow {
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 2px #3B82F6); }
+            to { filter: drop-shadow(0 0 6px #3B82F6); }
+        }
+
+        .core-pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .nav-link.active {
+            background: linear-gradient(45deg, #6366f1, #3b82f6);
+            color: white;
+        }
+        .section-fade {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .mobile-menu.active {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen flex flex-col text-gray-100">
+   <!-- Navegación Principal -->
+   <nav class="bg-gray-800 shadow-xl sticky top-0 z-50" aria-label="Navegación principal">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
+                <!-- Logo con tamaño personalizado -->
+                <img src="logo.png" alt="Logo de Techly" style="height: 55px; width: 55px;"> <!-- Tamaño de 50x50 píxeles -->
+                <span class="text-white text-xl font-bold ml-3">Techly</span>
+            </a>
+
+               <!-- Navegación Desktop -->
+               <div class="flex items-center space-x-4">
+                <a href="index.html" class="nav-item">
+                    <i data-lucide="home" class="nav-icon"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="cpu.html" class="nav-item">
+                    <i data-lucide="cpu" class="nav-icon"></i>
+                    <span>CPU</span>
+                </a>
+                <a href="gamepad.html" class="nav-item">
+                    <i data-lucide="gamepad-2" class="nav-icon"></i>
+                    <span>Gamepad</span>
+                </a>
+                <a href="sonido.html" class="nav-item">
+                    <i data-lucide="volume-2" class="nav-icon"></i>
+                    <span>Sonido</span>
+                </a>
+                <a href="virus.html" class="nav-item">
+                    <i data-lucide="shield-alert" class="nav-icon"></i>
+                    <span>Virus</span>
+                </a>
+                <a id="infoButton" class="nav-item">
+                    <i data-lucide="info" class="nav-icon"></i>
+                    <span>Información</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Modal de Información -->
+<div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+    <div class="bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-white">Información de la Página</h2>
+            <button id="closeModalButton" class="text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <p class="text-gray-400">
+            Esta es una página de prueba para el sistema de seguridad NexusGuard. Aquí puedes realizar escaneos rápidos y profundos, así como ver amenazas detectadas.
+        </p>
+    </div>
+</div>
+
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+        <div class="max-w-6xl mx-auto space-y-6">
+            <!-- Tarjeta de Estado Principal -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="metric-card p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Uso de CPU</p>
+                            <p class="text-3xl font-bold mt-2" id="cpu-usage">0%</p>
+                        </div>
+                        <div class="gauge-container">
+                            <svg width="120" height="120">
+                                <circle cx="60" cy="60" r="50" class="stroke-current text-gray-700" 
+                                        stroke-width="10" fill="none"/>
+                                <circle cx="60" cy="60" r="50" class="stroke-current text-blue-500" 
+                                        stroke-width="10" fill="none" stroke-linecap="round"
+                                        id="cpu-gauge" transform="rotate(-90 60 60)"
+                                        stroke-dasharray="314" stroke-dashoffset="314"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Temperatura</p>
+                            <p class="text-3xl font-bold mt-2" id="cpu-temp">0°C</p>
+                        </div>
+                        <i data-lucide="thermometer" class="w-12 h-12 text-red-500 temperature-glow"></i>
+                    </div>
+                </div>
+
+                <div class="metric-card p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Núcleos Activos</p>
+                            <p class="text-3xl font-bold mt-2" id="cpu-cores">0/4</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full core-pulse"></div>
+                            <div class="w-3 h-3 bg-gray-700 rounded-full"></div>
+                            <div class="w-3 h-3 bg-gray-700 rounded-full"></div>
+                            <div class="w-3 h-3 bg-gray-700 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico y Estadísticas -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="metric-card p-6 rounded-xl shadow-lg">
+                    <canvas id="cpuChart"></canvas>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="metric-card p-6 rounded-xl shadow-lg">
+                        <h3 class="text-lg font-bold mb-4">Uso por Núcleo</h3>
+                        <div class="space-y-3" id="core-usage"></div>
+                    </div>
+                    
+                    <div class="metric-card p-6 rounded-xl shadow-lg">
+                        <h3 class="text-lg font-bold mb-4">Memoria</h3>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-gray-400">Usado: <span id="mem-used">0GB</span></span>
+                            <span class="text-sm text-gray-400">Libre: <span id="mem-free">0GB</span></span>
+                        </div>
+                        <div class="w-full bg-gray-800 rounded-full h-2">
+                            <div id="mem-progress" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+<!-- Footer -->
+<footer class="bg-gray-800 border-t border-gray-700 mt-8">
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-gray-400">
+            <!-- Sobre Nosotros -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Sobre Nosotros</h3>
+                <p class="text-sm">Somos especialistas en desarrollo de herramientas para gaming y diagnóstico de hardware.</p>
+            </div>
+
+            <!-- Enlaces Rápidos -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Enlaces Rápidos</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
+                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">Pruebas</a></li>
+                    <li><a href="acerca.html" class="hover:text-blue-400 transition-colors">Acerca de</a></li>
+                </ul>
+            </div>
+
+            <!-- Inicio -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Inicio</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">CPU</a></li>
+                    <li><a href="gamepad.html" class="hover:text-blue-400 transition-colors">Gamepad</a></li>
+                    <li><a href="sonido.html" class="hover:text-blue-400 transition-colors">Sonido</a></li>
+                    <li><a href="virus.html" class="hover:text-blue-400 transition-colors">Virus</a></li>
+                </ul>
+            </div>
+
+            <!-- Información Legal -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Información Legal</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="Política de Privacidad.html" class="hover:text-blue-400 transition-colors">Política de Privacidad</a></li>
+                    <li><a href="Términos y Condiciones.html" class="hover:text-blue-400 transition-colors">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Derechos de Autor -->
+        <div class="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
+            <p>&copy; 2023 Techly. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+
+
+    <script>
+// Inicializar los íconos de Lucide
+const initIcons = () => {
+    lucide.createIcons();
+};
+
+// Manejo del menú móvil
+const initMobileMenu = () => {
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden'); // Alternar visibilidad del menú móvil
+        });
+    }
+};
+
+// Manejo del modal de información
+const initInfoModal = () => {
+    const infoButton = document.getElementById('infoButton');
+    const infoButtonMobile = document.getElementById('infoButtonMobile');
+    const infoModal = document.getElementById('infoModal');
+    const closeModalButton = document.getElementById('closeModalButton');
+
+    // Función para mostrar el modal
+    const showModal = () => {
+        infoModal.classList.remove('hidden');
+        infoModal.classList.add('flex');
+    };
+
+    // Función para ocultar el modal
+    const hideModal = () => {
+        infoModal.classList.add('hidden');
+        infoModal.classList.remove('flex');
+    };
+
+    // Event listeners para los botones de información
+    if (infoButton) {
+        infoButton.addEventListener('click', showModal);
+    }
+
+    if (infoButtonMobile) {
+        infoButtonMobile.addEventListener('click', showModal);
+    }
+
+    // Event listener para el botón de cerrar el modal
+    if (closeModalButton) {
+        closeModalButton.addEventListener('click', hideModal);
+    }
+
+    // Cerrar el modal haciendo clic fuera del contenido del modal
+    infoModal.addEventListener('click', (event) => {
+        if (event.target === infoModal) {
+            hideModal();
+        }
+    });
+
+    // Cerrar el modal con la tecla Escape
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !infoModal.classList.contains('hidden')) {
+            hideModal();
+        }
+    });
+};
+
+// Inicializar todas las funcionalidades
+const init = () => {
+    initIcons(); // Inicializar íconos
+    initMobileMenu(); // Inicializar menú móvil
+    initInfoModal(); // Inicializar modal de información
+};
+
+// Ejecutar la función init cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', init);
+
+
+
+
+ // Inicializar los íconos de Lucide
+ lucide.createIcons();
+
+// Variables globales
+let cpuChart;
+let cpuUsage = 0;
+let cpuTemperature = 0;
+let cpuCores = 4; // Número de núcleos (ajusta según tu CPU)
+let coreUsages = new Array(cpuCores).fill(0);
+let memoryUsed = 0;
+let memoryTotal = 8; // Memoria total en GB (ajusta según tu sistema)
+
+// Elementos del DOM
+const cpuUsageElement = document.getElementById('cpu-usage');
+const cpuGauge = document.getElementById('cpu-gauge');
+const cpuTempElement = document.getElementById('cpu-temp');
+const cpuCoresElement = document.getElementById('cpu-cores');
+const coreUsageContainer = document.getElementById('core-usage');
+const memUsedElement = document.getElementById('mem-used');
+const memFreeElement = document.getElementById('mem-free');
+const memProgress = document.getElementById('mem-progress');
+
+// Función para actualizar el uso de la CPU
+const updateCpuUsage = () => {
+    // Simular datos de uso de la CPU (en un caso real, usarías una API o librería)
+    cpuUsage = Math.min(100, Math.max(0, cpuUsage + (Math.random() - 0.5) * 10));
+    cpuUsageElement.textContent = `${cpuUsage.toFixed(1)}%`;
+
+    // Actualizar el gráfico de la CPU
+    const offset = 314 - (cpuUsage / 100) * 314;
+    cpuGauge.style.strokeDashoffset = offset;
+
+    // Actualizar el gráfico de líneas
+    if (cpuChart) {
+        const labels = cpuChart.data.labels;
+        const data = cpuChart.data.datasets[0].data;
+        labels.push(new Date().toLocaleTimeString());
+        data.push(cpuUsage);
+
+        if (labels.length > 10) {
+            labels.shift();
+            data.shift();
+        }
+
+        cpuChart.update();
+    }
+};
+
+// Función para actualizar la temperatura de la CPU
+const updateCpuTemperature = () => {
+    // Simular datos de temperatura (en un caso real, usarías una API o librería)
+    cpuTemperature = Math.min(100, Math.max(0, cpuTemperature + (Math.random() - 0.5) * 2));
+    cpuTempElement.textContent = `${cpuTemperature.toFixed(1)}°C`;
+
+    // Cambiar el color del ícono de temperatura según la temperatura
+    const thermometerIcon = document.querySelector('.temperature-glow');
+    if (cpuTemperature > 70) {
+        thermometerIcon.classList.remove('text-red-500');
+        thermometerIcon.classList.add('text-red-700');
+    } else {
+        thermometerIcon.classList.remove('text-red-700');
+        thermometerIcon.classList.add('text-red-500');
+    }
+};
+
+// Función para actualizar el uso por núcleo
+const updateCoreUsage = () => {
+    coreUsageContainer.innerHTML = '';
+    coreUsages = coreUsages.map(() => Math.min(100, Math.max(0, Math.random() * 100)));
+
+    coreUsages.forEach((usage, index) => {
+        const coreElement = document.createElement('div');
+        coreElement.className = 'space-y-2';
+        coreElement.innerHTML = `
+            <div class="flex justify-between text-sm text-gray-400">
+                <span>Núcleo ${index + 1}</span>
+                <span>${usage.toFixed(1)}%</span>
+            </div>
+            <div class="w-full bg-gray-800 rounded-full h-2">
+                <div class="bg-blue-500 h-2 rounded-full" style="width: ${usage}%"></div>
+            </div>
+        `;
+        coreUsageContainer.appendChild(coreElement);
+    });
+
+    // Actualizar núcleos activos
+    const activeCores = coreUsages.filter(usage => usage > 10).length;
+    cpuCoresElement.textContent = `${activeCores}/${cpuCores}`;
+
+    // Animación de núcleos activos
+    const corePulses = document.querySelectorAll('.core-pulse');
+    corePulses.forEach((core, index) => {
+        if (index < activeCores) {
+            core.classList.add('bg-blue-500', 'core-pulse');
+            core.classList.remove('bg-gray-700');
+        } else {
+            core.classList.remove('bg-blue-500', 'core-pulse');
+            core.classList.add('bg-gray-700');
+        }
+    });
+};
+
+// Función para actualizar el uso de memoria
+const updateMemoryUsage = () => {
+    // Simular datos de memoria (en un caso real, usarías una API o librería)
+    memoryUsed = Math.min(memoryTotal, Math.max(0, memoryUsed + (Math.random() - 0.5) * 0.5));
+    const memoryFree = memoryTotal - memoryUsed;
+
+    memUsedElement.textContent = `${memoryUsed.toFixed(1)}GB`;
+    memFreeElement.textContent = `${memoryFree.toFixed(1)}GB`;
+    memProgress.style.width = `${(memoryUsed / memoryTotal) * 100}%`;
+};
+
+// Inicializar el gráfico de la CPU
+const initCpuChart = () => {
+    const ctx = document.getElementById('cpuChart').getContext('2d');
+    cpuChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Uso de CPU',
+                data: [],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 2,
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: '#374151'
+                    },
+                    ticks: {
+                        color: '#9ca3af'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: '#374151'
+                    },
+                    ticks: {
+                        color: '#9ca3af'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+};
+
+// Función para actualizar todos los datos
+const updateAllData = () => {
+    updateCpuUsage();
+    updateCpuTemperature();
+    updateCoreUsage();
+    updateMemoryUsage();
+};
+
+// Inicializar el gráfico y comenzar la actualización de datos
+initCpuChart();
+setInterval(updateAllData, 1000); // Actualizar cada segundo
+
+// Animación de pulso para núcleos activos
+const styleSheet = document.createElement('style');
+styleSheet.innerHTML = `
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    .core-pulse {
+        animation: pulse 1.5s infinite;
+    }
+    .temperature-glow {
+        filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6));
+    }
+`;
+document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

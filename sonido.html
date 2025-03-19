@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware Diagnostic Suite</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="logo.png">
+    <style>
+      /* === Transiciones y Animaciones === */
+.tool-card {
+    transition: all 0.3s ease;
+}
+
+.section-fade {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.mobile-menu.active {
+    max-height: 500px;
+}
+
+/* === Navegación === */
+.nav-link.active {
+    background: linear-gradient(45deg, #6366f1, #3b82f6);
+    color: white;
+}
+
+.nav-item {
+    @apply px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md flex items-center space-x-2 transition-colors;
+}
+
+.mobile-nav-item {
+    @apply block px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-md flex items-center space-x-2;
+}
+
+/* === Componentes Interactivos === */
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2);
+}
+
+.control-button {
+    @apply flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-medium transition-all;
+    @apply hover:scale-[1.02] transform transition-transform;
+    @apply rounded-full py-3 px-8 font-semibold shadow-lg duration-300 hover:scale-105 active:scale-95;
+    @apply bg-blue-600 hover:bg-blue-700 shadow-blue-500/20 hover:shadow-blue-500/40;
+}
+
+/* === Sliders y Medidores === */
+.range-slider::-webkit-slider-thumb {
+    @apply w-5 h-5 bg-blue-400 rounded-full appearance-none cursor-pointer transition-all;
+    box-shadow: 0 2px 6px rgba(96, 165, 250, 0.4);
+}
+
+.range-slider::-moz-range-thumb {
+    @apply w-5 h-5 bg-blue-400 rounded-full cursor-pointer transition-all;
+}
+
+.range-slider-professional {
+    @apply w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer;
+}
+
+.range-slider-professional::-webkit-slider-thumb {
+    @apply w-5 h-5 bg-blue-400 rounded-full shadow-xl;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.vumeter-container {
+    @apply h-4 bg-gray-600 rounded-full overflow-hidden;
+}
+
+.vumeter-bar {
+    @apply h-full transition-all duration-100;
+    width: var(--level, 0%);
+}
+
+.vumeter-professional {
+    @apply h-3 bg-gray-600 rounded-full overflow-hidden;
+}
+
+.vumeter-bar-professional {
+    @apply h-full transition-all duration-100;
+    width: var(--level, 0%);
+}
+
+/* === Utilidades === */
+.nav-icon {
+    @apply w-5 h-5 flex-shrink-0;
+}
+
+.mobile-nav-icon {
+    @apply w-5 h-5 flex-shrink-0;
+}
+
+#audioAnalyser {
+    @apply rounded-lg bg-gray-600;
+}
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen flex flex-col text-gray-100">
+   <!-- Navegación Principal -->
+   <nav class="bg-gray-800 shadow-xl sticky top-0 z-50" aria-label="Navegación principal">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
+                <!-- Logo con tamaño personalizado -->
+                <img src="logo.png" alt="Logo de Techly" style="height: 55px; width: 55px;"> <!-- Tamaño de 50x50 píxeles -->
+                <span class="text-white text-xl font-bold ml-3">Techly</span>
+            </a>
+
+            <!-- Navegación Desktop -->
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="nav-item">
+                    <i data-lucide="home" class="nav-icon"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="cpu.html" class="nav-item">
+                    <i data-lucide="cpu" class="nav-icon"></i>
+                    <span>CPU</span>
+                </a>
+                <a href="gamepad.html" class="nav-item">
+                    <i data-lucide="gamepad-2" class="nav-icon"></i>
+                    <span>Gamepad</span>
+                </a>
+                <a href="sonido.html" class="nav-item">
+                    <i data-lucide="volume-2" class="nav-icon"></i>
+                    <span>Sonido</span>
+                </a>
+                <a href="virus.html" class="nav-item">
+                    <i data-lucide="shield-alert" class="nav-icon"></i>
+                    <span>Virus</span>
+                </a>
+                <a id="infoButton" class="nav-item">
+                    <i data-lucide="info" class="nav-icon"></i>
+                    <span>Información</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Modal de Información -->
+<div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+    <div class="bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-white">Información de la Página</h2>
+            <button id="closeModalButton" class="text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <p class="text-gray-400">
+            Esta es una página de prueba para el sistema de seguridad NexusGuard. Aquí puedes realizar escaneos rápidos y profundos, así como ver amenazas detectadas.
+        </p>
+    </div>
+</div>
+
+
+<!-- Contenedor Principal -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8">
+    <!-- Sección de Pruebas de Audio -->
+    <section id="pruebas" class="section-content active">
+        <div class="max-w-7xl mx-auto bg-gray-900 rounded-3xl shadow-2xl border border-gray-800 overflow-hidden">
+            
+            <!-- Encabezado Principal -->
+            <div class="px-10 py-8 border-b border-gray-800 bg-gradient-to-r from-gray-850 to-gray-900">
+                <div class="flex items-center justify-between">
+                    <!-- Títulos -->
+                    <div>
+                        <h2 class="text-3xl font-bold text-white">Audio Diagnostics Suite</h2>
+                        <p class="text-gray-400 mt-2 text-lg">Precision Audio Analysis System</p>
+                    </div>
+                    
+                    <!-- Indicador de Estado -->
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-gray-800 px-4 py-2 rounded-full shadow-md">
+                            <span class="text-sm font-medium text-purple-400" id="audio-status">IDLE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenido Principal -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-10 p-10">
+                
+                <!-- Columna Izquierda - Panel de Control -->
+                <div class="space-y-10">
+                    <!-- Grupo de Métricas -->
+                    <div class="grid grid-cols-2 gap-8">
+                        <!-- Tarjeta de Frecuencia -->
+                        <div class="bg-gray-800 p-6 rounded-2xl border border-gray-750 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400 mb-1">FREQUENCY</p>
+                                    <p class="text-3xl font-bold text-blue-400" id="current-frequency">440 Hz</p>
+                                </div>
+                                <div class="p-3 bg-blue-400/20 rounded-xl">
+                                    <i data-lucide="waveform" class="w-8 h-8 text-blue-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tarjeta de Volumen -->
+                        <div class="bg-gray-800 p-6 rounded-2xl border border-gray-750 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400 mb-1">OUTPUT LEVEL</p>
+                                    <p class="text-3xl font-bold text-green-400" id="current-volume">50%</p>
+                                </div>
+                                <div class="p-3 bg-green-400/20 rounded-xl">
+                                    <i data-lucide="volume-2" class="w-8 h-8 text-green-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controles Deslizantes -->
+                    <div class="space-y-8">
+                        <!-- Control de Frecuencia -->
+                        <div class="space-y-6">
+                            <div class="flex justify-between text-sm text-gray-400">
+                                <span>LOW FREQ (20Hz)</span>
+                                <span>HIGH FREQ (20kHz)</span>
+                            </div>
+                            <input type="range" id="frequency" min="20" max="20000" value="440" 
+                                   class="w-full range-slider-professional bg-gradient-to-r from-blue-400 to-purple-400">
+                        </div>
+                        
+                        <!-- Control de Volumen -->
+                        <div class="space-y-6">
+                            <div class="flex justify-between text-sm text-gray-400">
+                                <span>MIN (0dB)</span>
+                                <span>MAX (+12dB)</span>
+                            </div>
+                            <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5" 
+                                   class="w-full range-slider-professional bg-gradient-to-r from-green-400 to-blue-400">
+                        </div>
+                    </div>
+
+                    <!-- Botones de Control -->
+                    <div class="grid grid-cols-3 gap-6">
+                        <button id="playButton" class="control-button bg-blue-600 hover:bg-blue-700 transition-colors duration-300">
+                            <i data-lucide="play" class="w-6 h-6 mr-2"></i>
+                            <span class="text-lg">START</span>
+                        </button>
+                        <button id="sweepButton" class="control-button bg-purple-600 hover:bg-purple-700 transition-colors duration-300">
+                            <i data-lucide="activity" class="w-6 h-6 mr-2"></i>
+                            <span class="text-lg">SWEEP</span>
+                        </button>
+                        <button id="stopButton" class="control-button bg-red-600 hover:bg-red-700 transition-colors duration-300">
+                            <i data-lucide="stop-circle" class="w-6 h-6 mr-2"></i>
+                            <span class="text-lg">STOP</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha - Visualización -->
+                <div class="space-y-10">
+                    <!-- Analizador de Espectro -->
+                    <div class="bg-gray-800 rounded-2xl border border-gray-750 p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="flex items-center justify-between mb-8">
+                            <h3 class="text-xl font-semibold text-white">SPECTRUM ANALYZER</h3>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm text-gray-400">RT60:</span>
+                                <span class="text-sm text-green-400">1.2s</span>
+                            </div>
+                        </div>
+                        <canvas id="audioAnalyser" class="w-full h-56"></canvas>
+                    </div>
+
+                    <!-- Indicador de Nivel -->
+                    <div class="bg-gray-800 rounded-2xl border border-gray-750 p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="flex items-center justify-between mb-8">
+                            <h3 class="text-xl font-semibold text-white">OUTPUT LEVEL</h3>
+                            <div class="text-sm text-gray-400">PEAK: <span class="text-red-400">-3dB</span></div>
+                        </div>
+                        <div class="vumeter-professional h-4 bg-gray-750 rounded-full overflow-hidden">
+                            <div class="vumeter-bar-professional h-full bg-gradient-to-r from-blue-400 to-purple-400" id="vuLevel"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-800 border-t border-gray-700 mt-8">
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-gray-400">
+            <!-- Sobre Nosotros -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Sobre Nosotros</h3>
+                <p class="text-sm">Somos especialistas en desarrollo de herramientas para gaming y diagnóstico de hardware.</p>
+            </div>
+
+            <!-- Enlaces Rápidos -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Enlaces Rápidos</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
+                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">Pruebas</a></li>
+                    <li><a href="acerca.html" class="hover:text-blue-400 transition-colors">Acerca de</a></li>
+                </ul>
+            </div>
+
+            <!-- Inicio -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Inicio</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">CPU</a></li>
+                    <li><a href="gamepad.html" class="hover:text-blue-400 transition-colors">Gamepad</a></li>
+                    <li><a href="sonido.html" class="hover:text-blue-400 transition-colors">Sonido</a></li>
+                    <li><a href="virus.html" class="hover:text-blue-400 transition-colors">Virus</a></li>
+                </ul>
+            </div>
+
+            <!-- Información Legal -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Información Legal</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="Política de Privacidad.html" class="hover:text-blue-400 transition-colors">Política de Privacidad</a></li>
+                    <li><a href="Términos y Condiciones.html" class="hover:text-blue-400 transition-colors">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Derechos de Autor -->
+        <div class="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
+            <p>&copy; 2023 Techly. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+
+
+<script>
+// Inicializar los íconos de Lucide
+lucide.createIcons();
+
+// Manejo del menú móvil
+const mobileMenuButton = document.getElementById('mobileMenuButton');
+const mobileMenu = document.getElementById('mobileMenu');
+
+if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden'); // Alternar visibilidad del menú móvil
+    });
+}
+
+// Manejo del modal de información
+const infoButton = document.getElementById('infoButton');
+const infoButtonMobile = document.getElementById('infoButtonMobile');
+const infoModal = document.getElementById('infoModal');
+const closeModalButton = document.getElementById('closeModalButton');
+
+// Función para mostrar el modal
+const showModal = () => {
+    infoModal.classList.remove('hidden'); // Muestra el modal
+    infoModal.classList.add('flex'); // Asegura que el modal sea flexible
+};
+
+// Función para ocultar el modal
+const hideModal = () => {
+    infoModal.classList.add('hidden'); // Oculta el modal
+    infoModal.classList.remove('flex'); // Elimina la clase flex
+};
+
+// Event listeners para los botones de información
+if (infoButton) {
+    infoButton.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (escritorio)
+}
+
+if (infoButtonMobile) {
+    infoButtonMobile.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (móvil)
+}
+
+// Event listener para el botón de cerrar el modal
+if (closeModalButton) {
+    closeModalButton.addEventListener('click', hideModal); // Oculta el modal al hacer clic en el botón de cerrar
+}
+
+// Cerrar el modal haciendo clic fuera del contenido del modal
+infoModal.addEventListener('click', (event) => {
+    if (event.target === infoModal) {
+        hideModal(); // Oculta el modal si se hace clic fuera del contenido
+    }
+});
+
+// Cerrar el modal con la tecla Escape
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !infoModal.classList.contains('hidden')) {
+        hideModal(); // Oculta el modal si se presiona la tecla Escape
+    }
+});
+
+
+
+
+
+// Inicializar los íconos de Lucide
+lucide.createIcons();
+
+// Variables globales
+let audioContext;
+let oscillator;
+let gainNode;
+let analyser;
+let isPlaying = false;
+let isSweeping = false;
+
+// Elementos del DOM
+const playButton = document.getElementById('playButton');
+const sweepButton = document.getElementById('sweepButton');
+const stopButton = document.getElementById('stopButton');
+const frequencySlider = document.getElementById('frequency');
+const volumeSlider = document.getElementById('volume');
+const currentFrequency = document.getElementById('current-frequency');
+const currentVolume = document.getElementById('current-volume');
+const audioStatus = document.getElementById('audio-status');
+const vuLevel = document.getElementById('vuLevel');
+const audioAnalyserCanvas = document.getElementById('audioAnalyser');
+const canvasCtx = audioAnalyserCanvas.getContext('2d');
+
+// Inicializar el contexto de audio
+const initAudioContext = () => {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        gainNode = audioContext.createGain();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 2048;
+        gainNode.connect(analyser);
+        analyser.connect(audioContext.destination);
+    }
+};
+
+// Iniciar el tono
+const startTone = (frequency) => {
+    if (!isPlaying) {
+        initAudioContext();
+        oscillator = audioContext.createOscillator();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.connect(gainNode);
+        oscillator.start();
+        isPlaying = true;
+        audioStatus.textContent = 'PLAYING';
+        playButton.classList.replace('bg-blue-600', 'bg-blue-700');
+    }
+};
+
+// Detener el tono
+const stopTone = () => {
+    if (oscillator && isPlaying) {
+        oscillator.stop();
+        oscillator.disconnect();
+        isPlaying = false;
+        isSweeping = false;
+        audioStatus.textContent = 'IDLE';
+        playButton.classList.replace('bg-blue-700', 'bg-blue-600');
+        sweepButton.classList.replace('bg-purple-700', 'bg-purple-600');
+    }
+};
+
+// Barrido de frecuencia
+const startSweep = () => {
+    if (!isSweeping && isPlaying) {
+        isSweeping = true;
+        sweepButton.classList.replace('bg-purple-600', 'bg-purple-700');
+        const startFreq = 20;
+        const endFreq = 20000;
+        const duration = 5; // Duración del barrido en segundos
+        const startTime = audioContext.currentTime;
+
+        oscillator.frequency.setValueAtTime(startFreq, startTime);
+        oscillator.frequency.exponentialRampToValueAtTime(endFreq, startTime + duration);
+
+        setTimeout(() => {
+            isSweeping = false;
+            sweepButton.classList.replace('bg-purple-700', 'bg-purple-600');
+        }, duration * 1000);
+    }
+};
+
+// Actualizar frecuencia
+frequencySlider.addEventListener('input', () => {
+    const frequency = frequencySlider.value;
+    currentFrequency.textContent = `${frequency} Hz`;
+    if (oscillator && isPlaying) {
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+    }
+});
+
+// Actualizar volumen
+volumeSlider.addEventListener('input', () => {
+    const volume = volumeSlider.value;
+    currentVolume.textContent = `${Math.round(volume * 100)}%`;
+    if (gainNode) {
+        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+    }
+    vuLevel.style.width = `${volume * 100}%`;
+});
+
+// Event listeners para los botones
+playButton.addEventListener('click', () => {
+    if (!isPlaying) {
+        startTone(frequencySlider.value);
+    }
+});
+
+sweepButton.addEventListener('click', () => {
+    if (isPlaying && !isSweeping) {
+        startSweep();
+    }
+});
+
+stopButton.addEventListener('click', () => {
+    stopTone();
+});
+
+// Visualización del analizador de espectro
+const drawAnalyser = () => {
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const draw = () => {
+        requestAnimationFrame(draw);
+        analyser.getByteFrequencyData(dataArray);
+
+        canvasCtx.fillStyle = 'rgb(17, 24, 39)'; // Fondo del canvas
+        canvasCtx.fillRect(0, 0, audioAnalyserCanvas.width, audioAnalyserCanvas.height);
+
+        const barWidth = (audioAnalyserCanvas.width / bufferLength) * 2.5;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+            const barHeight = dataArray[i] / 2;
+            canvasCtx.fillStyle = `rgb(${barHeight + 100}, 50, 150)`; // Color de las barras
+            canvasCtx.fillRect(x, audioAnalyserCanvas.height - barHeight, barWidth, barHeight);
+            x += barWidth + 1;
+        }
+    };
+
+    draw();
+};
+
+// Iniciar la visualización del analizador
+if (analyser) {
+    drawAnalyser();
+}
+
+</script>
+<html>
+</html>

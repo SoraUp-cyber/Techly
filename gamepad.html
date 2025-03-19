@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamepad Tester Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="logo.png">
+    <style>
+        .gamepad-button {
+            transition: all 0.1s ease;
+            min-height: 4rem;
+        }
+        
+        .axis-indicator {
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            height: 6px;
+        }
+
+        .pulse-status {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .trigger-effect {
+            transform: rotateZ(0deg);
+            transition: transform 0.2s ease-out;
+        }
+        .nav-link.active {
+            background: linear-gradient(45deg, #6366f1, #3b82f6);
+            color: white;
+        }
+        .section-fade {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .mobile-menu.active {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen flex flex-col text-gray-100">
+    <!-- Navegación Principal -->
+    <nav class="bg-gray-800 shadow-xl sticky top-0 z-50" aria-label="Navegación principal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
+                    <!-- Logo con tamaño personalizado -->
+                    <img src="logo.png" alt="Logo de Techly" style="height: 55px; width: 55px;"> <!-- Tamaño de 50x50 píxeles -->
+                    <span class="text-white text-xl font-bold ml-3">Techly</span>
+                </a>
+
+                <!-- Navegación Desktop -->
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="nav-item">
+                        <i data-lucide="home" class="nav-icon"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="cpu.html" class="nav-item">
+                        <i data-lucide="cpu" class="nav-icon"></i>
+                        <span>CPU</span>
+                    </a>
+                    <a href="gamepad.html" class="nav-item">
+                        <i data-lucide="gamepad-2" class="nav-icon"></i>
+                        <span>Gamepad</span>
+                    </a>
+                    <a href="sonido.html" class="nav-item">
+                        <i data-lucide="volume-2" class="nav-icon"></i>
+                        <span>Sonido</span>
+                    </a>
+                    <a href="virus.html" class="nav-item">
+                        <i data-lucide="shield-alert" class="nav-icon"></i>
+                        <span>Virus</span>
+                    </a>
+                    <a id="infoButton" class="nav-item">
+                        <i data-lucide="info" class="nav-icon"></i>
+                        <span>Información</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal de Información -->
+    <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+        <div class="bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">Información de la Página</h2>
+                <button id="closeModalButton" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <p class="text-gray-400">
+                Esta es una página de prueba para el sistema de seguridad NexusGuard. Aquí puedes realizar escaneos rápidos y profundos, así como ver amenazas detectadas.
+            </p>
+        </div>
+    </div>
+
+
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+        <div class="max-w-4xl mx-auto bg-gray-800 rounded-xl shadow-2xl p-6 space-y-6">
+            <!-- Encabezado de Estado -->
+            <div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-gray-700 rounded-lg space-y-3 sm:space-y-0">
+                <div class="flex items-center space-x-3">
+                    <div id="connection-status" class="w-3 h-3 rounded-full bg-red-500 pulse-status"></div>
+                    <span id="status-text" class="font-medium">Desconectado</span>
+                </div>
+                <div class="flex items-center space-x-4 text-sm">
+                    <div class="flex items-center space-x-2 text-blue-400">
+                        <i data-lucide="battery" class="w-5 h-5"></i>
+                        <span id="battery-text">--%</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-purple-400">
+                        <i data-lucide="fingerprint" class="w-5 h-5"></i>
+                        <span id="info-text">ID: --</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid de Botones -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="buttons-container">
+                <!-- Botones generados dinámicamente -->
+            </div>
+
+            <!-- Indicadores de Ejes -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="axes-container">
+                <!-- Ejes generados dinámicamente -->
+            </div>
+        </div>
+    </main>
+
+   <!-- Footer -->
+   <footer class="bg-gray-800 border-t border-gray-700 mt-8">
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-gray-400">
+            <!-- Sobre Nosotros -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Sobre Nosotros</h3>
+                <p class="text-sm">Somos especialistas en desarrollo de herramientas para gaming y diagnóstico de hardware.</p>
+            </div>
+
+            <!-- Enlaces Rápidos -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Enlaces Rápidos</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
+                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">Pruebas</a></li>
+                    <li><a href="acerca.html" class="hover:text-blue-400 transition-colors">Acerca de</a></li>
+                </ul>
+            </div>
+
+            <!-- Inicio -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Inicio</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">CPU</a></li>
+                    <li><a href="gamepad.html" class="hover:text-blue-400 transition-colors">Gamepad</a></li>
+                    <li><a href="sonido.html" class="hover:text-blue-400 transition-colors">Sonido</a></li>
+                    <li><a href="virus.html" class="hover:text-blue-400 transition-colors">Virus</a></li>
+                </ul>
+            </div>
+
+            <!-- Información Legal -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Información Legal</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="Política de Privacidad.html" class="hover:text-blue-400 transition-colors">Política de Privacidad</a></li>
+                    <li><a href="Términos y Condiciones.html" class="hover:text-blue-400 transition-colors">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Derechos de Autor -->
+        <div class="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
+            <p>&copy; 2023 Techly. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+
+    <script>
+// Inicializar los íconos de Lucide
+lucide.createIcons();
+
+// Manejo del menú móvil
+const mobileMenuButton = document.getElementById('mobileMenuButton');
+const mobileMenu = document.getElementById('mobileMenu');
+
+if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden'); // Alternar visibilidad del menú móvil
+    });
+}
+
+// Manejo del modal de información
+const infoButton = document.getElementById('infoButton');
+const infoButtonMobile = document.getElementById('infoButtonMobile');
+const infoModal = document.getElementById('infoModal');
+const closeModalButton = document.getElementById('closeModalButton');
+
+// Función para mostrar el modal
+const showModal = () => {
+    infoModal.classList.remove('hidden'); // Muestra el modal
+    infoModal.classList.add('flex'); // Asegura que el modal sea flexible
+};
+
+// Función para ocultar el modal
+const hideModal = () => {
+    infoModal.classList.add('hidden'); // Oculta el modal
+    infoModal.classList.remove('flex'); // Elimina la clase flex
+};
+
+// Event listeners para los botones de información
+if (infoButton) {
+    infoButton.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (escritorio)
+}
+
+if (infoButtonMobile) {
+    infoButtonMobile.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (móvil)
+}
+
+// Event listener para el botón de cerrar el modal
+if (closeModalButton) {
+    closeModalButton.addEventListener('click', hideModal); // Oculta el modal al hacer clic en el botón de cerrar
+}
+
+// Cerrar el modal haciendo clic fuera del contenido del modal
+infoModal.addEventListener('click', (event) => {
+    if (event.target === infoModal) {
+        hideModal(); // Oculta el modal si se hace clic fuera del contenido
+    }
+});
+
+// Cerrar el modal con la tecla Escape
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !infoModal.classList.contains('hidden')) {
+        hideModal(); // Oculta el modal si se presiona la tecla Escape
+    }
+});
+
+
+
+
+
+
+
+
+// Inicializar los íconos de Lucide
+lucide.createIcons();
+
+// Variables globales
+let gamepadConnected = false;
+let animationFrame;
+
+// Elementos del DOM
+const connectionStatus = document.getElementById('connection-status');
+const statusText = document.getElementById('status-text');
+const batteryText = document.getElementById('battery-text');
+const infoText = document.getElementById('info-text');
+const buttonsContainer = document.getElementById('buttons-container');
+const axesContainer = document.getElementById('axes-container');
+
+// Función para actualizar el estado de conexión
+const updateConnectionStatus = (connected) => {
+    if (connected) {
+        connectionStatus.classList.remove('bg-red-500');
+        connectionStatus.classList.add('bg-green-500');
+        statusText.textContent = 'Conectado';
+        connectionStatus.classList.add('pulse-status'); // Animación de conexión
+    } else {
+        connectionStatus.classList.remove('bg-green-500', 'pulse-status');
+        connectionStatus.classList.add('bg-red-500');
+        statusText.textContent = 'Desconectado';
+        batteryText.textContent = '--%';
+        infoText.textContent = 'ID: --';
+        buttonsContainer.innerHTML = '';
+        axesContainer.innerHTML = '';
+    }
+};
+
+// Función para actualizar la información del gamepad
+const updateGamepadInfo = (gamepad) => {
+    infoText.textContent = `ID: ${gamepad.id}`;
+
+    // Mostrar información de la batería si está disponible
+    if (gamepad.battery) {
+        const batteryLevel = Math.round(gamepad.battery.level * 100);
+        batteryText.textContent = `${batteryLevel}%`;
+
+        // Cambiar el color del ícono de la batería según el nivel
+        if (batteryLevel <= 20) {
+            batteryText.classList.remove('text-blue-400');
+            batteryText.classList.add('text-red-400');
+        } else {
+            batteryText.classList.remove('text-red-400');
+            batteryText.classList.add('text-blue-400');
+        }
+    } else {
+        batteryText.textContent = 'No disponible';
+        batteryText.classList.remove('text-blue-400', 'text-red-400');
+        batteryText.classList.add('text-gray-400');
+    }
+};
+
+// Función para crear botones dinámicamente
+const createButtons = (buttons) => {
+    buttonsContainer.innerHTML = '';
+    buttons.forEach((button, index) => {
+        const buttonElement = document.createElement('div');
+        buttonElement.className = 'p-4 bg-gray-700 rounded-lg text-center hover:scale-105 transition-transform';
+        buttonElement.innerHTML = `
+            <p class="text-sm text-gray-400">Botón ${index}</p>
+            <p class="text-lg font-bold text-purple-400">${button.value.toFixed(2)}</p>
+        `;
+        buttonsContainer.appendChild(buttonElement);
+    });
+};
+
+// Función para crear ejes dinámicamente
+const createAxes = (axes) => {
+    axesContainer.innerHTML = '';
+    axes.forEach((axis, index) => {
+        const axisElement = document.createElement('div');
+        axisElement.className = 'p-4 bg-gray-700 rounded-lg hover:scale-105 transition-transform';
+        axisElement.innerHTML = `
+            <p class="text-sm text-gray-400">Eje ${index}</p>
+            <div class="w-full bg-gray-600 rounded-full h-2 mt-2">
+                <div class="h-2 rounded-full bg-gradient-to-r from-blue-400 to-purple-400" 
+                     style="width: ${((axis + 1) / 2) * 100}%"></div>
+            </div>
+        `;
+        axesContainer.appendChild(axisElement);
+    });
+};
+
+// Función para actualizar el estado del gamepad
+const updateGamepadState = () => {
+    const gamepads = navigator.getGamepads();
+    const gamepad = gamepads[0]; // Solo el primer gamepad conectado
+
+    if (gamepad) {
+        updateGamepadInfo(gamepad);
+        createButtons(gamepad.buttons);
+        createAxes(gamepad.axes);
+    }
+
+    if (gamepadConnected) {
+        animationFrame = requestAnimationFrame(updateGamepadState);
+    }
+};
+
+// Evento de conexión del gamepad
+window.addEventListener('gamepadconnected', (event) => {
+    gamepadConnected = true;
+    updateConnectionStatus(true);
+    updateGamepadState();
+});
+
+// Evento de desconexión del gamepad
+window.addEventListener('gamepaddisconnected', (event) => {
+    gamepadConnected = false;
+    updateConnectionStatus(false);
+    cancelAnimationFrame(animationFrame);
+});
+
+// Inicializar el estado de conexión
+updateConnectionStatus(false);
+</script>
+</body>
+</html>

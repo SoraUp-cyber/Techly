@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos y Condiciones - Techly</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" href="logo.png">
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <!--navegador-->
+    <!-- Navegación Principal -->
+   <nav class="bg-gray-800 shadow-xl sticky top-0 z-50" aria-label="Navegación principal">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
+                <!-- Logo con tamaño personalizado -->
+                <img src="logo.png" alt="Logo de Techly" style="height: 55px; width: 55px;"> <!-- Tamaño de 50x50 píxeles -->
+                <span class="text-white text-xl font-bold ml-3">Techly</span>
+            </a>
+
+            <!-- Navegación Desktop -->
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="nav-item">
+                    <i data-lucide="home" class="nav-icon"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="cpu.html" class="nav-item">
+                    <i data-lucide="cpu" class="nav-icon"></i>
+                    <span>CPU</span>
+                </a>
+                <a href="gamepad.html" class="nav-item">
+                    <i data-lucide="gamepad-2" class="nav-icon"></i>
+                    <span>Gamepad</span>
+                </a>
+                <a href="sonido.html" class="nav-item">
+                    <i data-lucide="volume-2" class="nav-icon"></i>
+                    <span>Sonido</span>
+                </a>
+                <a href="virus.html" class="nav-item">
+                    <i data-lucide="shield-alert" class="nav-icon"></i>
+                    <span>Virus</span>
+                </a>
+                <a id="infoButton" class="nav-item">
+                    <i data-lucide="info" class="nav-icon"></i>
+                    <span>Información</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Modal de Información -->
+<div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+    <div class="bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-white">Información de la Página</h2>
+            <button id="closeModalButton" class="text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <p class="text-gray-400">
+            Esta es una página de prueba para el sistema de seguridad NexusGuard. Aquí puedes realizar escaneos rápidos y profundos, así como ver amenazas detectadas.
+        </p>
+    </div>
+</div>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="text-4xl font-bold mb-8">Términos y Condiciones</h1>
+        <div class="space-y-6 text-gray-300">
+            <p>
+                Bienvenido a <strong class="text-blue-400">Techly</strong>. Al utilizar nuestros servicios, aceptas los siguientes términos y condiciones. Por favor, léelos detenidamente.
+            </p>
+
+            <h2 class="text-2xl font-bold mt-6">1. Uso del Servicio</h2>
+            <p>
+                Nuestras herramientas están diseñadas para diagnóstico y optimización de hardware. No nos hacemos responsables del mal uso de las mismas.
+            </p>
+
+            <h2 class="text-2xl font-bold mt-6">2. Registro y Cuentas</h2>
+            <p>
+                Para acceder a ciertas funciones, debes registrarte. Eres responsable de mantener la confidencialidad de tu cuenta.
+            </p>
+
+            <h2 class="text-2xl font-bold mt-6">3. Propiedad Intelectual</h2>
+            <p>
+                Todo el contenido y software en Techly son propiedad de sus respectivos dueños y están protegidos por leyes de propiedad intelectual.
+            </p>
+
+            <h2 class="text-2xl font-bold mt-6">4. Limitación de Responsabilidad</h2>
+            <p>
+                No nos hacemos responsables por daños indirectos, pérdidas o perjuicios derivados del uso de nuestros servicios.
+            </p>
+
+            <h2 class="text-2xl font-bold mt-6">5. Modificaciones</h2>
+            <p>
+                Podemos modificar estos términos en cualquier momento. Te notificaremos de cambios significativos.
+            </p>
+
+            <h2 class="text-2xl font-bold mt-6">6. Ley Aplicable</h2>
+            <p>
+                Estos términos se rigen por las leyes de [tu país/región]. Cualquier disputa se resolverá en los tribunales correspondientes.
+            </p>
+
+            <p class="mt-8">
+                Si tienes preguntas, contáctanos en <a href="contacto.techly@gmail.com." class="text-blue-400 hover:underline">contacto.techly@gmail.com.</a>
+            </p>
+        </div>
+    </main>
+
+<!-- Footer -->
+<footer class="bg-gray-800 border-t border-gray-700 mt-8">
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-gray-400">
+            <!-- Sobre Nosotros -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Sobre Nosotros</h3>
+                <p class="text-sm">Somos especialistas en desarrollo de herramientas para gaming y diagnóstico de hardware.</p>
+            </div>
+
+            <!-- Enlaces Rápidos -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Enlaces Rápidos</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
+                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">Pruebas</a></li>
+                    <li><a href="acerca.html" class="hover:text-blue-400 transition-colors">Acerca de</a></li>
+                </ul>
+            </div>
+
+            <!-- Inicio -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Inicio</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">CPU</a></li>
+                    <li><a href="gamepad.html" class="hover:text-blue-400 transition-colors">Gamepad</a></li>
+                    <li><a href="sonido.html" class="hover:text-blue-400 transition-colors">Sonido</a></li>
+                    <li><a href="virus.html" class="hover:text-blue-400 transition-colors">Virus</a></li>
+                </ul>
+            </div>
+
+            <!-- Información Legal -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Información Legal</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="Política de Privacidad.html" class="hover:text-blue-400 transition-colors">Política de Privacidad</a></li>
+                    <li><a href="Términos y Condiciones.html" class="hover:text-blue-400 transition-colors">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Derechos de Autor -->
+        <div class="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
+            <p>&copy; 2023 Techly. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- Script para íconos -->
+    <script>
+        // Inicializar los íconos de Lucide
+lucide.createIcons();
+
+// Manejo del menú móvil
+const mobileMenuButton = document.getElementById('mobileMenuButton');
+const mobileMenu = document.getElementById('mobileMenu');
+
+if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden'); // Alternar visibilidad del menú móvil
+    });
+}
+
+// Manejo del modal de información
+const infoButton = document.getElementById('infoButton');
+const infoButtonMobile = document.getElementById('infoButtonMobile');
+const infoModal = document.getElementById('infoModal');
+const closeModalButton = document.getElementById('closeModalButton');
+
+// Función para mostrar el modal
+const showModal = () => {
+    infoModal.classList.remove('hidden'); // Muestra el modal
+    infoModal.classList.add('flex'); // Asegura que el modal sea flexible
+};
+
+// Función para ocultar el modal
+const hideModal = () => {
+    infoModal.classList.add('hidden'); // Oculta el modal
+    infoModal.classList.remove('flex'); // Elimina la clase flex
+};
+
+// Event listeners para los botones de información
+if (infoButton) {
+    infoButton.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (escritorio)
+}
+
+if (infoButtonMobile) {
+    infoButtonMobile.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (móvil)
+}
+
+// Event listener para el botón de cerrar el modal
+if (closeModalButton) {
+    closeModalButton.addEventListener('click', hideModal); // Oculta el modal al hacer clic en el botón de cerrar
+}
+
+// Cerrar el modal haciendo clic fuera del contenido del modal
+infoModal.addEventListener('click', (event) => {
+    if (event.target === infoModal) {
+        hideModal(); // Oculta el modal si se hace clic fuera del contenido
+    }
+});
+
+// Cerrar el modal con la tecla Escape
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !infoModal.classList.contains('hidden')) {
+        hideModal(); // Oculta el modal si se presiona la tecla Escape
+    }
+});
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
