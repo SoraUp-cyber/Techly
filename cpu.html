@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="ZOPCT1KJQM7AVXHedf8_spAcy35OYnPCTb7VMtpi7kY" />
-    <title>CPU Monitor Pro</title>
-
+    <title>Techly - Suite de Diagnóstico de Hardware</title>
     <!-- Meta Descripción para SEO -->
     <meta name="description" content="Techly es una plataforma especializada en diagnóstico de hardware, ofreciendo herramientas avanzadas para escaneos rápidos y detallados.">
 
@@ -74,66 +72,102 @@
         .mobile-menu.active {
             max-height: 500px;
         }
+        .core {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: gray;
+    display: inline-block;
+    margin: 5px;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.active-core {
+    background-color: #3B82F6;
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.2); opacity: 1; }
+}
+/* Animación del termómetro */
+.temperature-glow {
+    transition: filter 0.5s ease-in-out;
+}
+
+.high-temp {
+    filter: drop-shadow(0 0 10px red);
+    animation: pulse-red 1s infinite alternate;
+}
+
+@keyframes pulse-red {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* Animación del medidor de CPU */
+.gauge-container svg {
+    transition: stroke-dashoffset 0.5s ease-in-out;
+}
     </style>
 </head>
 <body class="bg-gray-900 min-h-screen flex flex-col text-gray-100">
-   <!-- Navegación Principal -->
-   <nav class="bg-gray-800 shadow-xl sticky top-0 z-50" aria-label="Navegación principal">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            <!-- Logo -->
-            <a href="index.html" class="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
-                <!-- Logo con tamaño personalizado -->
-                <img src="logo.png" alt="Logo de Techly" style="height: 55px; width: 55px;"> <!-- Tamaño de 50x50 píxeles -->
-                <span class="text-white text-xl font-bold ml-3">Techly</span>
-            </a>
+    <!-- Navegación Principal -->
+    <nav class="bg-gray-800 shadow-xl sticky top-0 z-50" aria-label="Navegación principal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
+                    <img src="logo.png" alt="Logo de Techly" style="height: 55px; width: 55px;">
+                    <span class="text-white text-xl font-bold ml-3">Techly</span>
+                </a>
 
-               <!-- Navegación Desktop -->
-               <div class="flex items-center space-x-4">
-                <a href="index.html" class="nav-item">
-                    <i data-lucide="home" class="nav-icon"></i>
-                    <span>Inicio</span>
-                </a>
-                <a href="cpu.html" class="nav-item">
-                    <i data-lucide="cpu" class="nav-icon"></i>
-                    <span>CPU</span>
-                </a>
-                <a href="gamepad.html" class="nav-item">
-                    <i data-lucide="gamepad-2" class="nav-icon"></i>
-                    <span>Gamepad</span>
-                </a>
-                <a href="sonido.html" class="nav-item">
-                    <i data-lucide="volume-2" class="nav-icon"></i>
-                    <span>Sonido</span>
-                </a>
-                <a href="virus.html" class="nav-item">
-                    <i data-lucide="shield-alert" class="nav-icon"></i>
-                    <span>Virus</span>
-                </a>
-                <a id="infoButton" class="nav-item">
-                    <i data-lucide="info" class="nav-icon"></i>
-                    <span>Información</span>
-                </a>
+                <!-- Navegación Desktop -->
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="nav-item">
+                        <i data-lucide="home" class="nav-icon"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="cpu.html" class="nav-item">
+                        <i data-lucide="cpu" class="nav-icon"></i>
+                        <span>CPU</span>
+                    </a>
+                    <a href="gamepad.html" class="nav-item">
+                        <i data-lucide="gamepad-2" class="nav-icon"></i>
+                        <span>Gamepad</span>
+                    </a>
+                    <a href="sonido.html" class="nav-item">
+                        <i data-lucide="volume-2" class="nav-icon"></i>
+                        <span>Sonido</span>
+                    </a>
+                    <a href="virus.html" class="nav-item">
+                        <i data-lucide="shield-alert" class="nav-icon"></i>
+                        <span>Virus</span>
+                    </a>
+                    <a id="infoButton" class="nav-item">
+                        <i data-lucide="info" class="nav-icon"></i>
+                        <span>Información</span>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<!-- Modal de Información -->
-<div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
-    <div class="bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-bold text-white">Información de la Página</h2>
-            <button id="closeModalButton" class="text-gray-400 hover:text-white">
-                <i data-lucide="x" class="w-6 h-6"></i>
-            </button>
+    <!-- Modal de Información -->
+    <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+        <div class="bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">Información de la Página</h2>
+                <button id="closeModalButton" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <p class="text-gray-400">
+                Esta es una página de prueba para el sistema de seguridad NexusGuard. Aquí puedes realizar escaneos rápidos y profundos, así como ver amenazas detectadas.
+            </p>
         </div>
-        <p class="text-white">
-            Esta es una página de prueba para el sistema de seguridad NexusGuard. Aquí puedes realizar escaneos rápidos y profundos, así como ver amenazas detectadas.
-        </p>
     </div>
-</div>
-
 
     <!-- Contenido Principal -->
     <main class="flex-1 p-4 sm:p-6 lg:p-8">
@@ -185,353 +219,356 @@
                 </div>
             </div>
 
-            <!-- Gráfico y Estadísticas -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="metric-card p-6 rounded-xl shadow-lg">
-                    <canvas id="cpuChart"></canvas>
-                </div>
-                
-                <div class="space-y-6">
-                    <div class="metric-card p-6 rounded-xl shadow-lg">
-                        <h3 class="text-lg font-bold mb-4">Uso por Núcleo</h3>
-                        <div class="space-y-3" id="core-usage"></div>
-                    </div>
-                    
-                    <div class="metric-card p-6 rounded-xl shadow-lg">
-                        <h3 class="text-lg font-bold mb-4">Memoria</h3>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">Usado: <span id="mem-used">0GB</span></span>
-                            <span class="text-sm text-gray-400">Libre: <span id="mem-free">0GB</span></span>
-                        </div>
-                        <div class="w-full bg-gray-800 rounded-full h-2">
-                            <div id="mem-progress" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+            <!-- Detalles Técnicos -->
+            <div class="metric-card p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-6">Detalles Técnicos del Procesador</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="flex items-center space-x-4">
+                        <i data-lucide="cpu" class="w-8 h-8 text-blue-500"></i>
+                        <div>
+                            <p class="text-gray-400">Modelo</p>
+                            <p class="text-lg font-semibold" id="cpu-model">Cargando...</p>
                         </div>
                     </div>
+                    <div class="flex items-center space-x-4">
+                        <i data-lucide="zap" class="w-8 h-8 text-green-500"></i>
+                        <div>
+                            <p class="text-gray-400">Velocidad Base</p>
+                            <p class="text-lg font-semibold" id="cpu-base-speed">Cargando...</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <i data-lucide="activity" class="w-8 h-8 text-purple-500"></i>
+                        <div>
+                            <p class="text-gray-400">Turbo Máximo</p>
+                            <p class="text-lg font-semibold" id="cpu-turbo-speed">Cargando...</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <i data-lucide="box" class="w-8 h-8 text-yellow-500"></i>
+                        <div>
+                            <p class="text-gray-400">Núcleos/Hilos</p>
+                            <p class="text-lg font-semibold" id="cpu-cores-threads">Cargando...</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <i data-lucide="database" class="w-8 h-8 text-red-500"></i>
+                        <div>
+                            <p class="text-gray-400">Caché L3</p>
+                            <p class="text-lg font-semibold" id="cpu-cache">Cargando...</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <i data-lucide="microwave" class="w-8 h-8 text-pink-500"></i>
+                        <div>
+                            <p class="text-gray-400">TDP</p>
+                            <p class="text-lg font-semibold" id="cpu-tdp">Cargando...</p>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Gráficos de Rendimiento -->
+            <div class="metric-card p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-6">Rendimiento en Diferentes Cargas de Trabajo</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-400">Juegos AAA</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-24 h-2 bg-gray-700 rounded-full">
+                                    <div class="h-2 bg-green-500 rounded-full" id="gaming-bar" style="width: 0%"></div>
+                                </div>
+                                <span class="text-sm text-gray-400" id="gaming-percent">0%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-400">Renderizado 3D</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-24 h-2 bg-gray-700 rounded-full">
+                                    <div class="h-2 bg-blue-500 rounded-full" id="render-bar" style="width: 0%"></div>
+                                </div>
+                                <span class="text-sm text-gray-400" id="render-percent">0%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-400">Streaming</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-24 h-2 bg-gray-700 rounded-full">
+                                    <div class="h-2 bg-purple-500 rounded-full" id="streaming-bar" style="width: 0%"></div>
+                                </div>
+                                <span class="text-sm text-gray-400" id="streaming-percent">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparación de Procesadores -->
+            <div class="metric-card p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-6">Comparativa con Procesadores Similares</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="text-gray-400 text-sm border-b border-gray-700">
+                                <th class="pb-3 text-left">Modelo</th>
+                                <th class="pb-3 text-center">Núcleos</th>
+                                <th class="pb-3 text-center">Hilos</th>
+                                <th class="pb-3 text-center">Frecuencia</th>
+                                <th class="pb-3 text-center">TDP</th>
+                                <th class="pb-3 text-center">Puntuación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                                <td class="py-3 text-left">Intel Core i7-12700K</td>
+                                <td class="py-3 text-center">12</td>
+                                <td class="py-3 text-center">20</td>
+                                <td class="py-3 text-center">3.6 GHz</td>
+                                <td class="py-3 text-center">125W</td>
+                                <td class="py-3 text-center text-green-500">18900</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                                <td class="py-3 text-left">AMD Ryzen 7 5800X</td>
+                                <td class="py-3 text-center">8</td>
+                                <td class="py-3 text-center">16</td>
+                                <td class="py-3 text-center">3.8 GHz</td>
+                                <td class="py-3 text-center">105W</td>
+                                <td class="py-3 text-center text-blue-500">16500</td>
+                            </tr>
+                            <tr class="hover:bg-gray-800/50">
+                                <td class="py-3 text-left">Intel Core i5-12600K</td>
+                                <td class="py-3 text-center">10</td>
+                                <td class="py-3 text-center">16</td>
+                                <td class="py-3 text-center">3.7 GHz</td>
+                                <td class="py-3 text-center">125W</td>
+                                <td class="py-3 text-center text-yellow-500">15800</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gráfico Histórico -->
+            <div class="metric-card p-6 rounded-xl shadow-lg">
+                <canvas id="cpuHistoryChart"></canvas>
             </div>
         </div>
     </main>
 
-
-
-<!-- Footer -->
-<footer class="bg-gray-800 border-t border-gray-700 mt-8">
-    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-gray-400">
-            <!-- Sobre Nosotros -->
-            <div class="space-y-3">
-                <h3 class="text-lg font-bold text-white">Sobre Nosotros</h3>
-                <p class="text-sm">Somos especialistas en desarrollo de herramientas para gaming y diagnóstico de hardware.</p>
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 mt-8">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-gray-400">
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-white">Sobre Nosotros</h3>
+                    <p class="text-sm">Somos especialistas en desarrollo de herramientas para gaming y diagnóstico de hardware.</p>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-white">Enlaces Rápidos</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
+                        <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">Pruebas</a></li>
+                        <li><a href="acerca.html" class="hover:text-blue-400 transition-colors">Acerca de</a></li>
+                    </ul>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-white">Inicio</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">CPU</a></li>
+                        <li><a href="gamepad.html" class="hover:text-blue-400 transition-colors">Gamepad</a></li>
+                        <li><a href="sonido.html" class="hover:text-blue-400 transition-colors">Sonido</a></li>
+                        <li><a href="virus.html" class="hover:text-blue-400 transition-colors">Virus</a></li>
+                    </ul>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-white">Información Legal</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="Política de Privacidad.html" class="hover:text-blue-400 transition-colors">Política de Privacidad</a></li>
+                        <li><a href="Términos y Condiciones.html" class="hover:text-blue-400 transition-colors">Términos y Condiciones</a></li>
+                    </ul>
+                </div>
             </div>
-
-            <!-- Enlaces Rápidos -->
-            <div class="space-y-3">
-                <h3 class="text-lg font-bold text-white">Enlaces Rápidos</h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
-                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">Pruebas</a></li>
-                    <li><a href="acerca.html" class="hover:text-blue-400 transition-colors">Acerca de</a></li>
-                </ul>
-            </div>
-
-            <!-- Inicio -->
-            <div class="space-y-3">
-                <h3 class="text-lg font-bold text-white">Inicio</h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">CPU</a></li>
-                    <li><a href="gamepad.html" class="hover:text-blue-400 transition-colors">Gamepad</a></li>
-                    <li><a href="sonido.html" class="hover:text-blue-400 transition-colors">Sonido</a></li>
-                    <li><a href="virus.html" class="hover:text-blue-400 transition-colors">Virus</a></li>
-                </ul>
-            </div>
-
-            <!-- Información Legal -->
-            <div class="space-y-3">
-                <h3 class="text-lg font-bold text-white">Información Legal</h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="Política de Privacidad.html" class="hover:text-blue-400 transition-colors">Política de Privacidad</a></li>
-                    <li><a href="Términos y Condiciones.html" class="hover:text-blue-400 transition-colors">Términos y Condiciones</a></li>
-                </ul>
-            </div>
-        </div>
-
-         <!-- Derechos de Autor -->
-            <div class="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-white">
+            <div class="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
                 <p>&copy; 2023 Techly. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
 
-
-
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-// Inicializar los íconos de Lucide
-const initIcons = () => {
-    lucide.createIcons();
-};
+        // Inicializar los íconos de Lucide
+lucide.createIcons();
 
 // Manejo del menú móvil
-const initMobileMenu = () => {
-    const mobileMenuButton = document.getElementById('mobileMenuButton');
-    const mobileMenu = document.getElementById('mobileMenu');
+const mobileMenuButton = document.getElementById('mobileMenuButton');
+const mobileMenu = document.getElementById('mobileMenu');
 
-    if (mobileMenuButton && mobileMenu) {
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden'); // Alternar visibilidad del menú móvil
-        });
-    }
-};
+if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden'); // Alternar visibilidad del menú móvil
+    });
+}
 
 // Manejo del modal de información
-const initInfoModal = () => {
-    const infoButton = document.getElementById('infoButton');
-    const infoButtonMobile = document.getElementById('infoButtonMobile');
-    const infoModal = document.getElementById('infoModal');
-    const closeModalButton = document.getElementById('closeModalButton');
+const infoButton = document.getElementById('infoButton');
+const infoButtonMobile = document.getElementById('infoButtonMobile');
+const infoModal = document.getElementById('infoModal');
+const closeModalButton = document.getElementById('closeModalButton');
 
-    // Función para mostrar el modal
-    const showModal = () => {
-        infoModal.classList.remove('hidden');
-        infoModal.classList.add('flex');
-    };
-
-    // Función para ocultar el modal
-    const hideModal = () => {
-        infoModal.classList.add('hidden');
-        infoModal.classList.remove('flex');
-    };
-
-    // Event listeners para los botones de información
-    if (infoButton) {
-        infoButton.addEventListener('click', showModal);
-    }
-
-    if (infoButtonMobile) {
-        infoButtonMobile.addEventListener('click', showModal);
-    }
-
-    // Event listener para el botón de cerrar el modal
-    if (closeModalButton) {
-        closeModalButton.addEventListener('click', hideModal);
-    }
-
-    // Cerrar el modal haciendo clic fuera del contenido del modal
-    infoModal.addEventListener('click', (event) => {
-        if (event.target === infoModal) {
-            hideModal();
-        }
-    });
-
-    // Cerrar el modal con la tecla Escape
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && !infoModal.classList.contains('hidden')) {
-            hideModal();
-        }
-    });
+// Función para mostrar el modal
+const showModal = () => {
+    infoModal.classList.remove('hidden'); // Muestra el modal
+    infoModal.classList.add('flex'); // Asegura que el modal sea flexible
 };
 
-// Inicializar todas las funcionalidades
-const init = () => {
-    initIcons(); // Inicializar íconos
-    initMobileMenu(); // Inicializar menú móvil
-    initInfoModal(); // Inicializar modal de información
+// Función para ocultar el modal
+const hideModal = () => {
+    infoModal.classList.add('hidden'); // Oculta el modal
+    infoModal.classList.remove('flex'); // Elimina la clase flex
 };
 
-// Ejecutar la función init cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', init);
+// Event listeners para los botones de información
+if (infoButton) {
+    infoButton.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (escritorio)
+}
+
+if (infoButtonMobile) {
+    infoButtonMobile.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (móvil)
+}
+
+// Event listener para el botón de cerrar el modal
+if (closeModalButton) {
+    closeModalButton.addEventListener('click', hideModal); // Oculta el modal al hacer clic en el botón de cerrar
+}
+
+// Cerrar el modal haciendo clic fuera del contenido del modal
+infoModal.addEventListener('click', (event) => {
+    if (event.target === infoModal) {
+        hideModal(); // Oculta el modal si se hace clic fuera del contenido
+    }
+});
+
+// Cerrar el modal con la tecla Escape
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !infoModal.classList.contains('hidden')) {
+        hideModal(); // Oculta el modal si se presiona la tecla Escape
+    }
+});
 
 
-
-
- // Inicializar los íconos de Lucide
+ // Cargar íconos de Lucide
  lucide.createIcons();
 
-// Variables globales
-let cpuChart;
-let cpuUsage = 0;
-let cpuTemperature = 0;
-let cpuCores = 4; // Número de núcleos (ajusta según tu CPU)
-let coreUsages = new Array(cpuCores).fill(0);
-let memoryUsed = 0;
-let memoryTotal = 8; // Memoria total en GB (ajusta según tu sistema)
+// Simulación de datos dinámicos
+document.addEventListener("DOMContentLoaded", function () {
+    // Simulación de temperatura y núcleos activos
+    document.getElementById("cpu-temp").innerText = "45°C";
+    document.getElementById("cpu-cores").innerText = "3/4";
 
-// Elementos del DOM
-const cpuUsageElement = document.getElementById('cpu-usage');
-const cpuGauge = document.getElementById('cpu-gauge');
-const cpuTempElement = document.getElementById('cpu-temp');
-const cpuCoresElement = document.getElementById('cpu-cores');
-const coreUsageContainer = document.getElementById('core-usage');
-const memUsedElement = document.getElementById('mem-used');
-const memFreeElement = document.getElementById('mem-free');
-const memProgress = document.getElementById('mem-progress');
+    // Simulación de detalles del procesador
+    document.getElementById("cpu-model").innerText = "Intel Core i7-10510U";
+    document.getElementById("cpu-base-speed").innerText = "1.8 GHz";
+    document.getElementById("cpu-turbo-speed").innerText = "4.9 GHz";
+    document.getElementById("cpu-cores-threads").innerText = "4/8";
+    document.getElementById("cpu-cache").innerText = "8 MB";
+    document.getElementById("cpu-tdp").innerText = "15W";
 
-// Función para actualizar el uso de la CPU
-const updateCpuUsage = () => {
-    // Simular datos de uso de la CPU (en un caso real, usarías una API o librería)
-    cpuUsage = Math.min(100, Math.max(0, cpuUsage + (Math.random() - 0.5) * 10));
-    cpuUsageElement.textContent = `${cpuUsage.toFixed(1)}%`;
+    // Simulación de rendimiento
+    document.getElementById("gaming-bar").style.width = "65%";
+    document.getElementById("gaming-percent").innerText = "65%";
+    document.getElementById("render-bar").style.width = "75%";
+    document.getElementById("render-percent").innerText = "75%";
+    document.getElementById("streaming-bar").style.width = "50%";
+    document.getElementById("streaming-percent").innerText = "50%";
 
-    // Actualizar el gráfico de la CPU
-    const offset = 314 - (cpuUsage / 100) * 314;
-    cpuGauge.style.strokeDashoffset = offset;
-
-    // Actualizar el gráfico de líneas
-    if (cpuChart) {
-        const labels = cpuChart.data.labels;
-        const data = cpuChart.data.datasets[0].data;
-        labels.push(new Date().toLocaleTimeString());
-        data.push(cpuUsage);
-
-        if (labels.length > 10) {
-            labels.shift();
-            data.shift();
-        }
-
-        cpuChart.update();
-    }
-};
-
-// Función para actualizar la temperatura de la CPU
-const updateCpuTemperature = () => {
-    // Simular datos de temperatura (en un caso real, usarías una API o librería)
-    cpuTemperature = Math.min(100, Math.max(0, cpuTemperature + (Math.random() - 0.5) * 2));
-    cpuTempElement.textContent = `${cpuTemperature.toFixed(1)}°C`;
-
-    // Cambiar el color del ícono de temperatura según la temperatura
-    const thermometerIcon = document.querySelector('.temperature-glow');
-    if (cpuTemperature > 70) {
-        thermometerIcon.classList.remove('text-red-500');
-        thermometerIcon.classList.add('text-red-700');
-    } else {
-        thermometerIcon.classList.remove('text-red-700');
-        thermometerIcon.classList.add('text-red-500');
-    }
-};
-
-// Función para actualizar el uso por núcleo
-const updateCoreUsage = () => {
-    coreUsageContainer.innerHTML = '';
-    coreUsages = coreUsages.map(() => Math.min(100, Math.max(0, Math.random() * 100)));
-
-    coreUsages.forEach((usage, index) => {
-        const coreElement = document.createElement('div');
-        coreElement.className = 'space-y-2';
-        coreElement.innerHTML = `
-            <div class="flex justify-between text-sm text-gray-400">
-                <span>Núcleo ${index + 1}</span>
-                <span>${usage.toFixed(1)}%</span>
-            </div>
-            <div class="w-full bg-gray-800 rounded-full h-2">
-                <div class="bg-blue-500 h-2 rounded-full" style="width: ${usage}%"></div>
-            </div>
-        `;
-        coreUsageContainer.appendChild(coreElement);
-    });
-
-    // Actualizar núcleos activos
-    const activeCores = coreUsages.filter(usage => usage > 10).length;
-    cpuCoresElement.textContent = `${activeCores}/${cpuCores}`;
-
-    // Animación de núcleos activos
-    const corePulses = document.querySelectorAll('.core-pulse');
-    corePulses.forEach((core, index) => {
-        if (index < activeCores) {
-            core.classList.add('bg-blue-500', 'core-pulse');
-            core.classList.remove('bg-gray-700');
+    // Actualizar núcleos activos visualmente
+    let coreDots = document.querySelectorAll(".core-pulse");
+    coreDots.forEach((dot, index) => {
+        if (index < 3) {
+            dot.classList.add("bg-blue-500");
         } else {
-            core.classList.remove('bg-blue-500', 'core-pulse');
-            core.classList.add('bg-gray-700');
+            dot.classList.remove("bg-blue-500");
+            dot.classList.add("bg-gray-700");
         }
     });
-};
 
-// Función para actualizar el uso de memoria
-const updateMemoryUsage = () => {
-    // Simular datos de memoria (en un caso real, usarías una API o librería)
-    memoryUsed = Math.min(memoryTotal, Math.max(0, memoryUsed + (Math.random() - 0.5) * 0.5));
-    const memoryFree = memoryTotal - memoryUsed;
-
-    memUsedElement.textContent = `${memoryUsed.toFixed(1)}GB`;
-    memFreeElement.textContent = `${memoryFree.toFixed(1)}GB`;
-    memProgress.style.width = `${(memoryUsed / memoryTotal) * 100}%`;
-};
-
-// Inicializar el gráfico de la CPU
-const initCpuChart = () => {
-    const ctx = document.getElementById('cpuChart').getContext('2d');
-    cpuChart = new Chart(ctx, {
-        type: 'line',
+    // Crear gráfico de rendimiento
+    const ctx = document.getElementById("performanceChart").getContext("2d");
+    new Chart(ctx, {
+        type: "bar",
         data: {
-            labels: [],
+            labels: ["Juegos AAA", "Renderizado 3D", "Streaming"],
             datasets: [{
-                label: 'Uso de CPU',
-                data: [],
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                borderWidth: 2,
-                fill: true,
+                label: "Uso del CPU",
+                data: [65, 75, 50],
+                backgroundColor: ["#22c55e", "#3b82f6", "#9333ea"],
+                borderRadius: 5
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    grid: {
-                        color: '#374151'
-                    },
-                    ticks: {
-                        color: '#9ca3af'
-                    }
-                },
-                x: {
-                    grid: {
-                        color: '#374151'
-                    },
-                    ticks: {
-                        color: '#9ca3af'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
+            plugins: { legend: { display: false } }
         }
     });
-};
 
-// Función para actualizar todos los datos
-const updateAllData = () => {
-    updateCpuUsage();
-    updateCpuTemperature();
-    updateCoreUsage();
-    updateMemoryUsage();
-};
+    // Crear gráfico histórico
+    const ctxHistory = document.getElementById("cpuHistoryChart").getContext("2d");
+    new Chart(ctxHistory, {
+        type: "line",
+        data: {
+            labels: ["10s", "20s", "30s", "40s", "50s", "60s"],
+            datasets: [{
+                label: "Uso del CPU (%)",
+                data: [30, 40, 55, 60, 50, 70],
+                borderColor: "#f97316",
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } }
+        }
+    });
+});
 
-// Inicializar el gráfico y comenzar la actualización de datos
-initCpuChart();
-setInterval(updateAllData, 1000); // Actualizar cada segundo
+document.addEventListener("DOMContentLoaded", function () {
+    actualizarMétricas(); // Llamada inicial
+    setInterval(actualizarMétricas, 5000); // Actualización cada 5 segundos
 
-// Animación de pulso para núcleos activos
-const styleSheet = document.createElement('style');
-styleSheet.innerHTML = `
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
+    function actualizarMétricas() {
+        const cpuUsage = Math.floor(Math.random() * 100); // Simulación de uso de CPU
+        const cpuTemp = Math.floor(Math.random() * 80) + 20; // Simulación de temperatura
+
+        // Actualizar la UI
+        document.getElementById("cpu-usage").textContent = `${cpuUsage}%`;
+        document.getElementById("cpu-temp").textContent = `${cpuTemp}°C`;
+
+        // Animación del termómetro según la temperatura
+        const thermometerIcon = document.querySelector(".temperature-glow");
+        if (cpuTemp > 60) {
+            thermometerIcon.classList.add("high-temp");
+        } else {
+            thermometerIcon.classList.remove("high-temp");
+        }
+
+        // Animación del medidor de CPU
+        const cpuGauge = document.getElementById("cpu-gauge");
+        const maxOffset = 314; // Circunferencia del círculo
+        const newOffset = maxOffset - (cpuUsage / 100) * maxOffset;
+
+        cpuGauge.style.transition = "stroke-dashoffset 0.5s ease-in-out";
+        cpuGauge.style.strokeDashoffset = newOffset;
     }
-    .core-pulse {
-        animation: pulse 1.5s infinite;
-    }
-    .temperature-glow {
-        filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6));
-    }
-`;
-document.head.appendChild(styleSheet);
+});
+
     </script>
 </body>
 </html>
