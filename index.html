@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-   <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Techly - Suite de Diagnóstico de Hardware</title>
-     <!-- Meta Descripción para SEO -->
-<meta name="description" content="Techly es una plataforma especializada en diagnóstico de hardware, ofreciendo herramientas avanzadas para escaneos rápidos y detallados.">
+    <!-- Meta Descripción para SEO -->
+    <meta name="description" content="Techly es una plataforma especializada en diagnóstico de hardware, ofreciendo herramientas avanzadas para escaneos rápidos y detallados.">
 
-<!-- Favicon -->
-<link rel="icon" type="image/png" href="logo.png">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
 
-<!-- Tailwind CSS -->
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-<!-- Lucide Icons -->
-<script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Google AdSense -->
-<meta name="google-adsense-account" content="ca-pub-7655863522500671">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7655863522500671"
-    crossorigin="anonymous"></script>
-<script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
+    <!-- Google AdSense -->
+    <meta name="google-adsense-account" content="ca-pub-7655863522500671">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7655863522500671"
+        crossorigin="anonymous"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+
     <style>
         .nav-link.active {
             background: linear-gradient(45deg, #6366f1, #3b82f6);
@@ -55,36 +56,38 @@
                     <img src="logo.png" alt="Logo de Techly" style="height: 55px; width: 55px;">
                     <span class="text-white text-xl font-bold ml-3">Techly</span>
                 </a>
-  <!-- Navegación Desktop -->
-  <div class="flex items-center space-x-4">
-    <a href="index.html" class="nav-item">
-        <i data-lucide="home" class="nav-icon"></i>
-        <span>Inicio</span>
-    </a>
-    <a href="cpu.html" class="nav-item">
-        <i data-lucide="cpu" class="nav-icon"></i>
-        <span>CPU</span>
-    </a>
-    <a href="gamepad.html" class="nav-item">
-        <i data-lucide="gamepad-2" class="nav-icon"></i>
-        <span>Gamepad</span>
-    </a>
-    <a href="sonido.html" class="nav-item">
-        <i data-lucide="volume-2" class="nav-icon"></i>
-        <span>Sonido</span>
-    </a>
-    <a href="virus.html" class="nav-item">
-        <i data-lucide="shield-alert" class="nav-icon"></i>
-        <span>Virus</span>
-    </a>
-    <a id="infoButton" class="nav-item">
-        <i data-lucide="info" class="nav-icon"></i>
-        <span>Información</span>
-    </a>
-</div>
-</div>
-</div>
-</nav>
+
+                <!-- Navegación Desktop -->
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="nav-item">
+                        <i data-lucide="home" class="nav-icon"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="cpu.html" class="nav-item">
+                        <i data-lucide="cpu" class="nav-icon"></i>
+                        <span>CPU</span>
+                    </a>
+                    <a href="gamepad.html" class="nav-item">
+                        <i data-lucide="gamepad-2" class="nav-icon"></i>
+                        <span>Gamepad</span>
+                    </a>
+                    <a href="sonido.html" class="nav-item">
+                        <i data-lucide="volume-2" class="nav-icon"></i>
+                        <span>Sonido</span>
+                    </a>
+                    <a href="virus.html" class="nav-item">
+                        <i data-lucide="shield-alert" class="nav-icon"></i>
+                        <span>Virus</span>
+                    </a>
+                    <a id="infoButton" class="nav-item">
+                        <i data-lucide="info" class="nav-icon"></i>
+                        <span>Información</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
     <!-- Modal de Información -->
     <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4">
@@ -107,18 +110,21 @@
                 Suite de Diagnóstico de Hardware
             </h1>
             <p class="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
-                Herramientas completas para pruebas y análisis de componentes
+                Techly es tu aliado para mantener tu hardware en óptimas condiciones. Realiza pruebas rápidas y detalladas de tu CPU, gamepad, sonido y sistema antivirus para garantizar el mejor rendimiento.
             </p>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="cpu.html" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium transition-colors">
                     Comenzar Pruebas
+                </a>
+                <a href="#herramientas" class="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition-colors">
+                    Ver Herramientas
                 </a>
             </div>
         </div>
     </section>
 
     <!-- Herramientas Section -->
-    <section class="py-20 bg-gray-800 section-fade">
+    <section id="herramientas" class="py-20 bg-gray-800 section-fade">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-center mb-12">Herramientas de Diagnóstico</h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -128,7 +134,7 @@
                         <i data-lucide="cpu" class="w-8 h-8 text-white"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">CPU</h3>
-                    <p class="text-white mb-4">Prueba el rendimiento de tu procesador</p>
+                    <p class="text-white mb-4">Analiza el rendimiento de tu procesador, detecta sobrecalentamiento y verifica el uso de recursos.</p>
                     <a href="cpu.html" class="text-blue-400 hover:text-blue-300 flex items-center">
                         Iniciar Prueba <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </a>
@@ -140,7 +146,7 @@
                         <i data-lucide="gamepad-2" class="w-8 h-8 text-white"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Gamepad</h3>
-                    <p class="text-white mb-4">Verifica el funcionamiento de tu mando</p>
+                    <p class="text-white mb-4">Verifica la conectividad y funcionalidad de tu mando para gaming.</p>
                     <a href="gamepad.html" class="text-blue-400 hover:text-blue-300 flex items-center">
                         Probar Gamepad <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </a>
@@ -152,7 +158,7 @@
                         <i data-lucide="volume-2" class="w-8 h-8 text-white"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Sonido</h3>
-                    <p class="text-white mb-4">Comprueba la calidad de tu audio</p>
+                    <p class="text-white mb-4">Comprueba la calidad de audio de tus dispositivos y soluciona problemas de sonido.</p>
                     <a href="sonido.html" class="text-blue-400 hover:text-blue-300 flex items-center">
                         Probar Sonido <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </a>
@@ -164,11 +170,21 @@
                         <i data-lucide="shield-alert" class="w-8 h-8 text-white"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Virus</h3>
-                    <p class="text-white mb-4">Escanea tu sistema en busca de malware</p>
+                    <p class="text-white mb-4">Escanea tu sistema en busca de malware y protege tu equipo de amenazas.</p>
                     <a href="virus.html" class="text-blue-400 hover:text-blue-300 flex items-center">
                         Iniciar Escaneo <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </a>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Estadísticas Section -->
+    <section class="py-20 bg-gray-900 section-fade">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12">Estadísticas del Sistema</h2>
+            <div class="bg-gray-800 p-6 rounded-xl">
+                <canvas id="systemChart"></canvas>
             </div>
         </div>
     </section>
@@ -188,19 +204,10 @@
                     <h3 class="text-lg font-bold text-white">Enlaces Rápidos</h3>
                     <ul class="space-y-2 text-sm">
                         <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
-                        <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">Pruebas</a></li>
-                        <li><a href="acerca.html" class="hover:text-blue-400 transition-colors">Acerca de</a></li>
-                    </ul>
-                </div>
-
-                <!-- Inicio -->
-                <div class="space-y-3">
-                    <h3 class="text-lg font-bold text-white">Inicio</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">CPU</a></li>
-                        <li><a href="gamepad.html" class="hover:text-blue-400 transition-colors">Gamepad</a></li>
-                        <li><a href="sonido.html" class="hover:text-blue-400 transition-colors">Sonido</a></li>
-                        <li><a href="virus.html" class="hover:text-blue-400 transition-colors">Virus</a></li>
+                        <li><a href="cpu.html" class="hover:text-blue-400 transition-colors">Pruebas de CPU</a></li>
+                        <li><a href="gamepad.html" class="hover:text-blue-400 transition-colors">Pruebas de Gamepad</a></li>
+                        <li><a href="sonido.html" class="hover:text-blue-400 transition-colors">Pruebas de Sonido</a></li>
+                        <li><a href="virus.html" class="hover:text-blue-400 transition-colors">Escaneo de Virus</a></li>
                     </ul>
                 </div>
 
@@ -287,62 +294,23 @@
             window.addEventListener("scroll", fadeInOnScroll);
         });
 
-        // Efecto hover en las tarjetas de herramientas
-        document.addEventListener("DOMContentLoaded", function () {
-            const toolCards = document.querySelectorAll(".tool-card");
-
-            toolCards.forEach((card) => {
-                card.addEventListener("mouseenter", () => {
-                    card.style.transform = "translateY(-10px)";
-                    card.style.transition = "transform 0.3s ease, background-color 0.3s ease";
-                });
-
-                card.addEventListener("mouseleave", () => {
-                    card.style.transform = "translateY(0)";
-                });
-            });
-        });
-
-        // Scroll suave para enlaces internos
-        document.addEventListener("DOMContentLoaded", function () {
-            const links = document.querySelectorAll('a[href^="#"]');
-
-            links.forEach((link) => {
-                link.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    const targetId = link.getAttribute("href");
-                    const targetElement = document.querySelector(targetId);
-
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: "smooth",
-                            block: "start",
-                        });
-                    }
-                });
-            });
-        });
-
-
-
-
-       
-         const ctx = document.getElementById('myChart').getContext('2d');
-        const myChart = new Chart(ctx, {
+        // Gráfico de estadísticas
+        const ctx = document.getElementById('systemChart').getContext('2d');
+        const systemChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Problemas Detectados', 'Problemas Resueltos', 'Optimizaciones'],
+                labels: ['Uso de CPU', 'Uso de Memoria', 'Espacio en Disco'],
                 datasets: [{
-                    label: 'Estadísticas',
-                    data: [12, 8, 15],
+                    label: 'Uso del Sistema (%)',
+                    data: [65, 40, 80],
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(99, 102, 241, 0.2)',
+                        'rgba(59, 130, 246, 0.2)',
                         'rgba(75, 192, 192, 0.2)'
                     ],
                     borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
+                        'rgba(99, 102, 241, 1)',
+                        'rgba(59, 130, 246, 1)',
                         'rgba(75, 192, 192, 1)'
                     ],
                     borderWidth: 1
@@ -351,7 +319,8 @@
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        max: 100
                     }
                 }
             }
