@@ -403,76 +403,67 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Inicializar los íconos de Lucide
-lucide.createIcons();
+    document.addEventListener("DOMContentLoaded", async () => {
+    lucide.createIcons(); // Cargar íconos de Lucide
+    manejarMenuMovil();
+    manejarModal();
+    simularDatosCPU();
+    iniciarGraficos();
+    actualizarMetricasPeriodicas();
+    await obtenerInformacionDispositivo();
+    calcularFPS();
+});
 
-// Manejo del menú móvil
-const mobileMenuButton = document.getElementById('mobileMenuButton');
-const mobileMenu = document.getElementById('mobileMenu');
+/* ==============================
+📌 MANEJO DEL MENÚ Y MODALES 
+============================== */
+function manejarMenuMovil() {
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+}
 
-if (mobileMenuButton && mobileMenu) {
-    mobileMenuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden'); // Alternar visibilidad del menú móvil
+function manejarModal() {
+    const infoButton = document.getElementById('infoButton');
+    const infoButtonMobile = document.getElementById('infoButtonMobile');
+    const infoModal = document.getElementById('infoModal');
+    const closeModalButton = document.getElementById('closeModalButton');
+
+    const showModal = () => {
+        infoModal.classList.remove('hidden');
+        infoModal.classList.add('flex');
+    };
+
+    const hideModal = () => {
+        infoModal.classList.add('hidden');
+        infoModal.classList.remove('flex');
+    };
+
+    if (infoButton) infoButton.addEventListener('click', showModal);
+    if (infoButtonMobile) infoButtonMobile.addEventListener('click', showModal);
+    if (closeModalButton) closeModalButton.addEventListener('click', hideModal);
+
+    infoModal.addEventListener('click', (event) => {
+        if (event.target === infoModal) hideModal();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !infoModal.classList.contains('hidden')) {
+            hideModal();
+        }
     });
 }
 
-// Manejo del modal de información
-const infoButton = document.getElementById('infoButton');
-const infoButtonMobile = document.getElementById('infoButtonMobile');
-const infoModal = document.getElementById('infoModal');
-const closeModalButton = document.getElementById('closeModalButton');
-
-// Función para mostrar el modal
-const showModal = () => {
-    infoModal.classList.remove('hidden'); // Muestra el modal
-    infoModal.classList.add('flex'); // Asegura que el modal sea flexible
-};
-
-// Función para ocultar el modal
-const hideModal = () => {
-    infoModal.classList.add('hidden'); // Oculta el modal
-    infoModal.classList.remove('flex'); // Elimina la clase flex
-};
-
-// Event listeners para los botones de información
-if (infoButton) {
-    infoButton.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (escritorio)
-}
-
-if (infoButtonMobile) {
-    infoButtonMobile.addEventListener('click', showModal); // Muestra el modal al hacer clic en el botón de información (móvil)
-}
-
-// Event listener para el botón de cerrar el modal
-if (closeModalButton) {
-    closeModalButton.addEventListener('click', hideModal); // Oculta el modal al hacer clic en el botón de cerrar
-}
-
-// Cerrar el modal haciendo clic fuera del contenido del modal
-infoModal.addEventListener('click', (event) => {
-    if (event.target === infoModal) {
-        hideModal(); // Oculta el modal si se hace clic fuera del contenido
-    }
-});
-
-// Cerrar el modal con la tecla Escape
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !infoModal.classList.contains('hidden')) {
-        hideModal(); // Oculta el modal si se presiona la tecla Escape
-    }
-});
-
-
- // Cargar íconos de Lucide
- lucide.createIcons();
-
-// Simulación de datos dinámicos
-document.addEventListener("DOMContentLoaded", function () {
-    // Simulación de temperatura y núcleos activos
+/* ==============================
+📌 SIMULACIÓN DE DATOS DE CPU
+============================== */
+function simularDatosCPU() {
     document.getElementById("cpu-temp").innerText = "45°C";
     document.getElementById("cpu-cores").innerText = "3/4";
-
-    // Simulación de detalles del procesador
     document.getElementById("cpu-model").innerText = "Intel Core i7-10510U";
     document.getElementById("cpu-base-speed").innerText = "1.8 GHz";
     document.getElementById("cpu-turbo-speed").innerText = "4.9 GHz";
@@ -480,94 +471,116 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("cpu-cache").innerText = "8 MB";
     document.getElementById("cpu-tdp").innerText = "15W";
 
-    // Simulación de rendimiento
     document.getElementById("gaming-bar").style.width = "65%";
     document.getElementById("gaming-percent").innerText = "65%";
     document.getElementById("render-bar").style.width = "75%";
     document.getElementById("render-percent").innerText = "75%";
     document.getElementById("streaming-bar").style.width = "50%";
     document.getElementById("streaming-percent").innerText = "50%";
+}
 
-    // Actualizar núcleos activos visualmente
-    let coreDots = document.querySelectorAll(".core-pulse");
-    coreDots.forEach((dot, index) => {
-        if (index < 3) {
-            dot.classList.add("bg-blue-500");
-        } else {
-            dot.classList.remove("bg-blue-500");
-            dot.classList.add("bg-gray-700");
-        }
-    });
-
-    // Crear gráfico de rendimiento
+/* ==============================
+📌 INICIAR GRÁFICOS CON CHART.JS
+============================== */
+function iniciarGraficos() {
     const ctx = document.getElementById("performanceChart").getContext("2d");
     new Chart(ctx, {
         type: "bar",
         data: {
             labels: ["Juegos AAA", "Renderizado 3D", "Streaming"],
-            datasets: [{
-                label: "Uso del CPU",
-                data: [65, 75, 50],
-                backgroundColor: ["#22c55e", "#3b82f6", "#9333ea"],
-                borderRadius: 5
-            }]
+            datasets: [{ label: "Uso del CPU", data: [65, 75, 50], backgroundColor: ["#22c55e", "#3b82f6", "#9333ea"], borderRadius: 5 }]
         },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } }
-        }
+        options: { responsive: true, plugins: { legend: { display: false } } }
     });
 
-    // Crear gráfico histórico
     const ctxHistory = document.getElementById("cpuHistoryChart").getContext("2d");
     new Chart(ctxHistory, {
         type: "line",
         data: {
             labels: ["10s", "20s", "30s", "40s", "50s", "60s"],
-            datasets: [{
-                label: "Uso del CPU (%)",
-                data: [30, 40, 55, 60, 50, 70],
-                borderColor: "#f97316",
-                borderWidth: 2,
-                fill: false
-            }]
+            datasets: [{ label: "Uso del CPU (%)", data: [30, 40, 55, 60, 50, 70], borderColor: "#f97316", borderWidth: 2, fill: false }]
         },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } }
-        }
+        options: { responsive: true, plugins: { legend: { display: false } } }
     });
-});
+}
 
-document.addEventListener("DOMContentLoaded", function () {
-    actualizarMétricas(); // Llamada inicial
-    setInterval(actualizarMétricas, 5000); // Actualización cada 5 segundos
-
+/* ==============================
+📌 ACTUALIZACIÓN DE MÉTRICAS CADA 5s
+============================== */
+function actualizarMetricasPeriodicas() {
     function actualizarMétricas() {
-        const cpuUsage = Math.floor(Math.random() * 100); // Simulación de uso de CPU
-        const cpuTemp = Math.floor(Math.random() * 80) + 20; // Simulación de temperatura
+        const cpuUsage = Math.floor(Math.random() * 100);
+        const cpuTemp = Math.floor(Math.random() * 80) + 20;
 
-        // Actualizar la UI
         document.getElementById("cpu-usage").textContent = `${cpuUsage}%`;
         document.getElementById("cpu-temp").textContent = `${cpuTemp}°C`;
 
-        // Animación del termómetro según la temperatura
         const thermometerIcon = document.querySelector(".temperature-glow");
-        if (cpuTemp > 60) {
-            thermometerIcon.classList.add("high-temp");
-        } else {
-            thermometerIcon.classList.remove("high-temp");
-        }
+        thermometerIcon.classList.toggle("high-temp", cpuTemp > 60);
 
-        // Animación del medidor de CPU
         const cpuGauge = document.getElementById("cpu-gauge");
-        const maxOffset = 314; // Circunferencia del círculo
-        const newOffset = maxOffset - (cpuUsage / 100) * maxOffset;
-
-        cpuGauge.style.transition = "stroke-dashoffset 0.5s ease-in-out";
-        cpuGauge.style.strokeDashoffset = newOffset;
+        const maxOffset = 314;
+        cpuGauge.style.strokeDashoffset = maxOffset - (cpuUsage / 100) * maxOffset;
     }
-});
+
+    actualizarMétricas();
+    setInterval(actualizarMétricas, 5000);
+}
+
+/* ==============================
+📌 OBTENER INFORMACIÓN DEL DISPOSITIVO (WEBGPU + WEBGL)
+============================== */
+async function obtenerInformacionDispositivo() {
+    document.getElementById("cpu-cores").textContent = `${navigator.hardwareConcurrency} núcleos`;
+
+    let gpuInfo = "No disponible";
+
+    // Intentar obtener la GPU con WebGPU
+    if (navigator.gpu) {
+        try {
+            const adapter = await navigator.gpu.requestAdapter();
+            gpuInfo = adapter ? adapter.name : "No disponible";
+        } catch (error) {
+            console.error("Error obteniendo información de la GPU:", error);
+        }
+    } else {
+        // Alternativa con WebGL
+        const canvas = document.createElement("canvas");
+        const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+        if (gl) {
+            const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+            gpuInfo = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "No disponible";
+        }
+    }
+
+    document.getElementById("gpu-info").textContent = `GPU: ${gpuInfo}`;
+    document.getElementById("screen-info").textContent = `Resolución: ${screen.width}x${screen.height} (${screen.colorDepth} bits)`;
+    document.getElementById("browser-info").textContent = `Navegador: ${navigator.userAgent}`;
+
+    document.getElementById("cpu-usage").textContent = "Uso de CPU: No disponible en navegadores";
+    document.getElementById("cpu-temp").textContent = "Temperatura: No disponible en navegadores";
+}
+
+/* ==============================
+📌 CÁLCULO DE FPS EN TIEMPO REAL
+============================== */
+function calcularFPS() {
+    let lastTime = performance.now();
+    let frames = 0;
+
+    function updateFPS() {
+        frames++;
+        const now = performance.now();
+        if (now >= lastTime + 1000) {
+            document.getElementById("fps-info").textContent = `FPS: ${frames}`;
+            frames = 0;
+            lastTime = now;
+        }
+        requestAnimationFrame(updateFPS);
+    }
+    updateFPS();
+}
+
 
     </script>
 </body>
